@@ -1,0 +1,6 @@
+{
+  "Naive last-value": 0.6594842004439208,
+  "Same-weekday avg (4wk)": 0.531130405730008,
+  "28-day moving average": 0.5215880144679158,
+  "LightGBM (engineered features)": 0.46473115630725437
+}

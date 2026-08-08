@@ -1,0 +1,19 @@
+
+
+#Ignore cursor AI rules
+.cursor\rules\codacy.mdc
+
+# Python
+__pycache__/
+*.pyc
+
+# Raw data (large; not committed — see README for how to obtain it from Kaggle)
+data/raw/*.csv
+
+# Large processed artifacts (regenerate by running src/ scripts in order)
+data/processed/*.parquet
+data/processed/lightgbm_model.txt
+
+# Power BI (built locally, not versioned)
+dashboard/*.pbix
+

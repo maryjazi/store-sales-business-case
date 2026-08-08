@@ -1,0 +1,14 @@
+{
+  "yoy_growth_2013_2016": 105.56655035274369,
+  "weekend_vs_weekday_pct": 39.34685082108111,
+  "top3_families": [
+    "GROCERY I",
+    "BEVERAGES",
+    "PRODUCE"
+  ],
+  "top3_families_share_pct": 63.626425492033114,
+  "holiday_uplift_pct": 19.006379944301322,
+  "payday_uplift_pct": 1.4134155144681637,
+  "oil_sales_correlation": -0.7506914883358086,
+  "promo_uplift_pct": 618.9368650855632
+}
