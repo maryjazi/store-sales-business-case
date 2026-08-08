@@ -1,0 +1,55 @@
+store_nbr,city,state,type,cluster,store_first_active_date
+1,Quito,Pichincha,D,13,2013-01-02
+10,Quito,Pichincha,C,15,2013-01-02
+11,Cayambe,Pichincha,B,6,2013-01-02
+12,Latacunga,Cotopaxi,C,15,2013-01-02
+13,Latacunga,Cotopaxi,C,15,2013-01-02
+14,Riobamba,Chimborazo,C,7,2013-01-02
+15,Ibarra,Imbabura,C,15,2013-01-02
+16,Santo Domingo,Santo Domingo de los Tsachilas,C,3,2013-01-02
+17,Quito,Pichincha,C,12,2013-01-02
+18,Quito,Pichincha,B,16,2013-01-02
+19,Guaranda,Bolivar,C,15,2013-01-02
+2,Quito,Pichincha,D,13,2013-01-02
+20,Quito,Pichincha,B,6,2013-01-02
+21,Santo Domingo,Santo Domingo de los Tsachilas,B,6,2013-01-02
+22,Puyo,Pastaza,C,7,2013-01-02
+23,Ambato,Tungurahua,D,9,2013-01-02
+24,Guayaquil,Guayas,D,1,2013-01-02
+25,Salinas,Santa Elena,D,1,2013-01-02
+26,Guayaquil,Guayas,D,10,2013-01-02
+27,Daule,Guayas,D,1,2015-02-13
+28,Guayaquil,Guayas,E,10,2015-07-24
+29,Guayaquil,Guayas,E,10,2015-10-09
+3,Quito,Pichincha,D,8,2013-01-02
+30,Guayaquil,Guayas,C,3,2013-01-02
+31,Babahoyo,Los Rios,B,10,2013-01-01
+32,Guayaquil,Guayas,C,3,2013-01-02
+33,Quevedo,Los Rios,C,3,2013-01-02
+34,Guayaquil,Guayas,B,6,2013-01-02
+35,Playas,Guayas,C,3,2015-03-20
+36,Libertad,Guayas,E,10,2013-01-02
+37,Cuenca,Azuay,D,2,2013-01-02
+38,Loja,Loja,D,4,2013-01-02
+39,Cuenca,Azuay,B,6,2013-01-02
+4,Quito,Pichincha,D,9,2013-01-02
+40,Machala,El Oro,C,3,2013-01-02
+41,Machala,El Oro,D,4,2013-05-09
+42,Cuenca,Azuay,D,2,2013-01-02
+43,Esmeraldas,Esmeraldas,E,10,2013-01-02
+44,Quito,Pichincha,A,5,2013-01-02
+45,Quito,Pichincha,A,11,2013-01-02
+46,Quito,Pichincha,A,14,2013-01-02
+47,Quito,Pichincha,A,14,2015-08-21
+48,Quito,Pichincha,A,14,2013-01-02
+49,Quito,Pichincha,A,11,2013-01-02
+5,Santo Domingo,Santo Domingo de los Tsachilas,D,4,2013-01-02
+50,Ambato,Tungurahua,A,14,2013-01-02
+51,Guayaquil,Guayas,A,17,2013-01-02
+52,Manta,Manabi,A,11,2013-01-02
+53,Manta,Manabi,D,13,2013-01-02
+54,El Carmen,Manabi,C,3,2013-01-02
+6,Quito,Pichincha,D,13,2013-01-02
+7,Quito,Pichincha,D,8,2017-04-20
+8,Quito,Pichincha,D,8,2014-05-29
+9,Quito,Pichincha,B,6,2013-01-02
