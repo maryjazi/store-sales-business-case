@@ -10,7 +10,7 @@ This is a separate script from phase4_forecasting.py because it reuses an alread
 model rather than retraining. Run phase4_forecasting.py first.
 
 (Note: this step was originally run as a one-off command and not saved as a script —
-fixed here so the full pipeline is reproducible end-to-end from src/, as the README claims.)
+fixed here so the full pipeline is reproducible end-to-end from etl/, as the README claims.)
 """
 import os
 import shutil

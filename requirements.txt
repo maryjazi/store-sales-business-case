@@ -7,3 +7,4 @@ statsmodels
 prophet
 lightgbm
 scikit-learn
+pytest

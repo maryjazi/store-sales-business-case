@@ -1,0 +1,37 @@
+stages:
+  - test
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+
+test:
+  stage: test
+  image: python:3.10-slim
+  before_script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+  script:
+    - pytest tests/ -v --tb=short
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH
+
+# Optional: run full ETL on scheduled pipelines or manual trigger
+# etl:
+#   stage: test
+#   image: python:3.10-slim
+#   before_script:
+#     - pip install -r requirements.txt
+#   script:
+#     - python etl/phase0_data_understanding.py
+#     - python etl/phase1_cleaning_features.py
+#   rules:
+#     - when: manual
+#   artifacts:
+#     paths:
+#       - data/processed/
+#     expire_in: 1 week

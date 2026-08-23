@@ -10,7 +10,7 @@ __pycache__/
 # Raw data (large; not committed — see README for how to obtain it from Kaggle)
 data/raw/*.csv
 
-# Large processed artifacts (regenerate by running src/ scripts in order)
+# Large processed artifacts (regenerate by running etl/ scripts in order)
 data/processed/*.parquet
 data/processed/lightgbm_model.txt
 

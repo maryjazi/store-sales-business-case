@@ -32,7 +32,7 @@ This project builds the analytical foundation to manage that uncertainty: a clea
 
 **Data.** Six source tables were merged into a single analytical dataset: daily sales by store and category, store metadata (city, state, format type, cluster), national holiday calendar, daily oil price, and store-level transaction counts.
 
-**Cleaning decisions (fully documented in `README.md` and `src/`):**
+**Cleaning decisions (fully documented in `README.md` and `etl/`):**
 - Missing transaction counts (245,784 rows, 98.7% of which had zero sales) were filled with 0 rather than dropped, preserving every store-day in the dataset.
 - A data-quality issue was caught and fixed: some calendar dates had duplicate holiday records, which silently inflated row counts on a naive merge (3,000,888 → 3,008,016 rows) — resolved by deduplicating holidays per date before merging.
 - Extreme sales values (top 0.1% per category) were flagged, not removed — they represent real demand spikes (e.g., holiday shopping), not data errors.
@@ -81,6 +81,8 @@ Four approaches were compared on the held-out 16-day validation window, scored w
 | **LightGBM (engineered features)** | **0.465** |
 
 The gradient-boosted model outperforms the strongest simple baseline by ~11%, using store identity, product category, store tenure (`days_since_store_open`), day-of-year seasonality, and promotion status as its top five predictive features. The model was trained on a 900,000-row sample for compute-budget reasons in this environment (2 CPU cores); retraining on the full ~2.97M-row training set on standard hardware would likely improve this further.
+
+**External validation.** The forecast was submitted to Kaggle's live leaderboard and scored **RMSLE 0.48464** on Kaggle's own held-out test set — close to the internal validation estimate (0.465), which confirms the validation methodology (a realistic, leakage-free time-based split) generalizes well to genuinely unseen data rather than being an artifact of how the validation set was chosen.
 
 The trained model was used to generate a 16-day forward forecast for the actual competition test window (Aug 16–31, 2017), available at `reports/forecast_submission.csv` and in dashboard-ready form at `data/processed/forecast_detail.parquet`.
 
