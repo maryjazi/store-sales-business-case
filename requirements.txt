@@ -3,8 +3,7 @@ numpy
 pyarrow
 matplotlib
 seaborn
-statsmodels
-prophet
 lightgbm
-scikit-learn
 pytest
+streamlit
+plotly

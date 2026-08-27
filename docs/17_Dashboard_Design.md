@@ -148,7 +148,46 @@ Full DAX definitions: `dashboard/POWERBI_GUIDE.md` § DAX Measures
 
 ---
 
-## 9. Related documents
+## 9. Streamlit dashboard (built, testable alternative)
+
+**Tool:** Streamlit + Plotly
+**Source:** `dashboard/app.py`
+**Data source:** same pre-aggregated tables as the Power BI model above (`reports/`, `data/processed/`) — no separate export step needed
+
+Built as a lightweight companion to the Power BI design in sections 1–8: no desktop app or `.pbix` file required, starts in seconds, and is easy to demo on any machine with Python installed.
+
+### 9.1 What it shows
+
+| Section | Content |
+|---|---|
+| KPI cards x4 | Total sales, best model RMSLE (with % improvement vs. best baseline), weekend uplift, holiday uplift |
+| Monthly sales trend | Line chart, `kpi_monthly.csv` |
+| Model comparison | Horizontal bar, all baselines + LightGBM (RMSLE, lower = better) |
+| Actual vs. forecast | 16-day validation window, `val_predictions.parquet` |
+| Store ranking | Top-10 by sales, filterable by store type (A-E) |
+| Category share | Top 8 categories + "Other", `kpi_category.csv` |
+| Feature importance | Expander, top 10 LightGBM features |
+
+### 9.2 Run
+
+```bash
+pip install -r requirements.txt
+streamlit run dashboard/app.py
+```
+
+Opens at `http://localhost:8501`.
+
+### 9.3 Status
+
+Verified headless with `streamlit.testing.v1.AppTest`: loads with zero exceptions, all 4 KPI cards compute correctly, all 6 charts render, and the store-type filter works. This is the dashboard to show live in a demo where Power BI Desktop isn't available or the `.pbix` file isn't on hand.
+
+### 9.4 Relationship to the Power BI design (sections 1-8)
+
+The Power BI design above remains the target BI deliverable (richer slicers, DAX measures, native drill-through). Streamlit is not a replacement for that design — it is a Python-native, zero-install way to demo the same KPIs while the Power BI build is completed.
+
+---
+
+## 10. Related documents
 
 - [06_KPI_Definition.md](06_KPI_Definition.md)
 - [16_Data_Model.md](16_Data_Model.md)

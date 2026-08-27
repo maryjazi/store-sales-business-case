@@ -8,7 +8,7 @@
 | **Project lead / analyst** | Maryam |
 | **Version** | 1.0 |
 | **Date** | August 2026 |
-| **Status** | Completed (analytics & forecasting); dashboard build in progress |
+| **Status** | Completed (analytics, forecasting, containerization & CI/CD); Power BI dashboard build in progress, Streamlit dashboard complete |
 
 ---
 
@@ -30,6 +30,8 @@ Retail chains lose margin when demand is mispredicted: overstocking ties up capi
 - KPI definition and recurring reporting outputs
 - Demand forecasting model with honest baseline comparison
 - Power BI star-schema export and dashboard design guide
+- Interactive Streamlit dashboard as a lightweight, no-install alternative to Power BI
+- Containerization (Docker) with automated build/test in GitLab CI/CD
 - Business case with quantified findings and recommendations
 - Project documentation (`docs/`, `sql/`, `tests/`, CI)
 
@@ -52,6 +54,8 @@ Retail chains lose margin when demand is mispredicted: overstocking ties up capi
 | 6 | Power BI data model | `dashboard/data/` |
 | 7 | Business case report | `reports/business_case.md` |
 | 8 | Project documentation pack | `docs/` |
+| 9 | Docker image + CI/CD pipeline | `Dockerfile`, `.gitlab-ci.yml` |
+| 10 | Streamlit dashboard | `dashboard/app.py` |
 
 ## 5. Success criteria
 
@@ -63,6 +67,8 @@ Retail chains lose margin when demand is mispredicted: overstocking ties up capi
 | KPI framework documented & exportable | ≥ 10 headline KPIs | ✅ 12 KPIs |
 | Reproducible pipeline | Full run from raw CSVs | ✅ Documented in `docs/pipeline.md` |
 | Dashboard data model ready | Star schema exported | ✅ 2 facts + 3 dims |
+| Interactive dashboard runs without a desktop BI tool | Streamlit app loads and renders all charts | ✅ Verified headless (`streamlit.testing.v1.AppTest`) |
+| Pipeline runs identically outside the host machine | `docker build` + `docker run` complete pytest suite | ✅ Verified — 3/3 pass (no data mount), 6/6 pass (data volume-mounted) |
 
 ## 6. Timeline (high level)
 
@@ -79,7 +85,7 @@ Retail chains lose margin when demand is mispredicted: overstocking ties up capi
 ## 7. Budget & resources
 
 - **Compute:** Local Python environment (2-core sandbox for model training; full retrain recommended on standard hardware)
-- **Tools:** Python 3.10+, Power BI Desktop (free), GitLab CI
+- **Tools:** Python 3.10+, Power BI Desktop (free), Docker, GitLab CI, Streamlit
 - **Data:** Kaggle competition dataset (free with account)
 - **Team:** 1 data analyst / data scientist (project lead)
 

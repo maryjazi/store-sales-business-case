@@ -17,7 +17,7 @@
 | 4b | Forecast Generation | forecast_submission.csv, Kaggle 0.48464 | ✅ Done |
 | 5 | Power BI Export | dashboard/data star schema | ✅ Done |
 | 6 | Business Case | reports/business_case.md | ✅ Done |
-| 7 | Documentation & CI | docs/, sql/, tests/, .gitlab-ci.yml | ✅ Done |
+| 7 | Documentation & CI | docs/, sql/, tests/, .gitlab-ci.yml, Dockerfile, Streamlit dashboard | ✅ Done |
 
 ---
 
@@ -42,6 +42,9 @@ Week 6   ████ Phase 7 (docs pack, tests, CI, dashboard screenshots)
 | Dashboard screenshots (External Factors, Forecast) | P2 | 🟡 Pending | Analyst |
 | Full-data model retrain (2.97M rows) | P2 | ☐ Not started | Analyst |
 | GitHub repo publish + portfolio links | P2 | ☐ Pending | Analyst |
+| `docker build` / `docker run` verified locally (6/6 tests pass with data mounted) | P1 | ✅ Done | Analyst |
+| Push to GitLab; confirm CI `docker-build` job is green | P1 | 🟡 Pending | Analyst |
+| Streamlit dashboard (`dashboard/app.py`) | — | ✅ Done (tested headless) | Analyst |
 
 ---
 
@@ -83,7 +86,7 @@ Week 6   ████ Phase 7 (docs pack, tests, CI, dashboard screenshots)
 | M1 — Data ready | merged + cleaned parquet validated | Week 2 | ✅ |
 | M2 — Insights delivered | EDA + KPI report approved | Week 3 | ✅ |
 | M3 — Model validated | RMSLE < 0.50 on Kaggle | Week 4 | ✅ (0.48464) |
-| M4 — Dashboard live | 5 pages + 4 screenshots | Week 6 | 🟡 2/4 screenshots |
+| M4 — Dashboard live | 5 pages + 4 screenshots | Week 6 | 🟡 2/4 screenshots (Power BI); Streamlit alternative fully working |
 | M5 — Portfolio complete | GitHub + README + business case | Week 6 | 🟡 Links pending |
 
 ---

@@ -34,6 +34,7 @@
 | NFR-10 | Deterministic feature engineering | Shared `etl/features.py` for train and test |
 | NFR-11 | Model versioning | `lightgbm_model.txt` saved with training run |
 | NFR-12 | Row-count sanity checks after every join | Phase 0 dedup fix; automated tests |
+| NFR-12b | Environment reproducible via container | `Dockerfile` pins Python 3.10-slim + exact `requirements.txt`; data volume-mounted at runtime, not baked into the image |
 
 ---
 
@@ -45,7 +46,7 @@
 | NFR-14 | Shared utilities in single module | `etl/features.py` |
 | NFR-15 | Code documented with business rationale | Docstrings in each phase script |
 | NFR-16 | Project documentation in `docs/` | 18-document pack |
-| NFR-17 | CI on every push | `.gitlab-ci.yml` runs pytest |
+| NFR-17 | CI on every push | `.gitlab-ci.yml` runs pytest, then builds and runs the same suite inside a Docker image (`docker-build` stage) |
 
 ---
 

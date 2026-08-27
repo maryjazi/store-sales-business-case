@@ -19,7 +19,7 @@
 | R-08 | Forecast degrades over time (concept drift) | Modeling | Medium | High | **High** | Recommend rolling RMSLE monitoring | Supply Chain | 🟡 Open |
 | R-09 | Oil correlation treated as causal | Business | Medium | Medium | **Medium** | Document as macro signal only | Finance | ✅ Mitigated |
 | R-10 | Compute timeout on full ETL in CI | Technical | Medium | Low | **Low** | CI runs tests only; ETL manual/scheduled | DevOps | ✅ Mitigated |
-| R-11 | Power BI not built / screenshots missing | Delivery | Medium | Low | **Low** | Guide + data ready; portfolio note | Data Analyst | 🟡 In progress |
+| R-11 | Power BI not built / screenshots missing | Delivery | Medium | Low | **Low** | Guide + data ready; Streamlit dashboard now gives a working, tested interactive view of the same KPIs as a fallback | Data Analyst | 🟡 Mitigated by Streamlit; Power BI .pbix still pending |
 | R-12 | Category concentration — supply disruption | Business | Low | High | **Medium** | Recommend SLA for top 3 categories | Merchandising | 🟡 Recommended |
 
 **Scoring:** Likelihood × Impact → High / Medium / Low

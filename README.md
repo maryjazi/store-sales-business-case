@@ -204,6 +204,39 @@ pytest tests/ -v                             # run unit & data-quality tests
 
 Then open Power BI Desktop and follow `dashboard/POWERBI_GUIDE.md` to build the dashboard.
 
+## Run with Docker
+
+The pipeline and test suite also run in a container — no local Python setup needed:
+
+```bash
+docker build -t sales-forecast .
+
+# Run the test suite (feature tests always run; data-quality tests skip
+# cleanly without data, and pass against the real 3M-row dataset when mounted)
+docker run --rm sales-forecast
+docker run --rm -v "$(pwd)/data:/app/data" sales-forecast
+
+# Run any ETL phase inside the container
+docker run --rm -v "$(pwd)/data:/app/data" sales-forecast python etl/phase3_kpi_reporting.py
+```
+
+`.gitlab-ci.yml` builds this image and runs the containerized test suite on every push/merge request (`docker-build` job), and pushes it to the project's Container Registry on `main` (`docker-push` job).
+
+## Interactive Dashboard (Streamlit)
+
+A lightweight alternative to the Power BI dashboard — no desktop app needed,
+runs anywhere Python does, reads the same pre-aggregated KPI tables so it
+starts instantly:
+
+```bash
+pip install -r requirements.txt
+streamlit run dashboard/app.py
+```
+
+Opens at `http://localhost:8501` — KPI cards, monthly sales trend, model
+comparison (LightGBM vs. baselines), actual-vs-forecast on the validation
+window, a filterable store ranking, and category share.
+
 ## Author
 
-Maryam — [GitHub profile link] · [LinkedIn link]
+Maryam

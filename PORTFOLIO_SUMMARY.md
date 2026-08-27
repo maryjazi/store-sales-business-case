@@ -12,10 +12,12 @@ Pick 2–4 depending on the role (data analyst vs. data scientist vs. BI-focused
 - Defined and reported a business KPI framework (revenue growth, category concentration, holiday/weekend uplift, store performance) translating raw transaction data into decision-ready metrics for retail operations.
 - Designed a Power BI star schema (fact/dimension model) and interactive dashboard with DAX measures for sales trend, category, regional, and store-performance reporting.
 - Authored a business case report with quantified findings and actionable recommendations for retail leadership, including a documented data-quality fix that prevented a ~7,000-row merge error.
+- Containerized the pipeline with Docker and automated build/test/push in a GitLab CI/CD pipeline (multi-stage: test → docker-build → docker-push), so the full analysis is reproducible from raw CSVs on any machine.
+- Built a companion Streamlit + Plotly dashboard reading the same pre-aggregated KPI tables as the Power BI model, as a lightweight, cross-platform alternative that needs no desktop app to demo.
 
 ## LinkedIn / Portfolio Blurb
 
-> Built a full sales analytics & forecasting project on a 3M-row multi-store retail dataset (Kaggle's Corporación Favorita competition): data cleaning and feature engineering in Python, exploratory analysis of sales drivers (seasonality, holidays, promotions, oil price), a LightGBM forecasting model validated against three baselines (11% error reduction), a business KPI framework, and an interactive Power BI dashboard — all documented end-to-end in a public GitHub repo with a written business case and recommendations.
+> Built a full sales analytics & forecasting project on a 3M-row multi-store retail dataset (Kaggle's Corporación Favorita competition): data cleaning and feature engineering in Python, exploratory analysis of sales drivers (seasonality, holidays, promotions, oil price), a LightGBM forecasting model validated against three baselines (11% error reduction), a business KPI framework, and interactive dashboards (Power BI + a Streamlit alternative) — containerized with Docker and built/tested automatically via GitLab CI/CD, and documented end-to-end in a public GitHub repo with a written business case and recommendations.
 > 🔗 [GitHub repo link] · [Dashboard screenshot / demo]
 
 ## One-Line Version (for a resume header/summary)
@@ -29,3 +31,5 @@ Pick 2–4 depending on the role (data analyst vs. data scientist vs. BI-focused
 - **What was the trickiest data issue?** A silent row-count inflation from duplicate holiday records on certain dates (caught by comparing merged row count to the pre-merge row count) — a reminder to always sanity-check row counts after every join.
 - **What would you do with more time/compute?** Retrain on the full 2.97M-row training set (sampled to 900k here for a 2-core environment), add a category-controlled promotion-ROI analysis, and test store-cluster-specific models.
 - **How do you know your validation wasn't optimistic?** Submitted the forecast to Kaggle's actual leaderboard — RMSLE 0.48464, close to the 0.465 from internal validation. A large gap would have signaled overfitting to the validation window; the close match is evidence the time-based split was a fair test.
+- **Why containerize this with Docker?** It removes "works on my machine" risk — the test suite and its exact dependency versions run the same way in GitLab CI as on a laptop, and it's a small step toward a deployable pipeline rather than a one-off notebook.
+- **Why build a Streamlit dashboard when Power BI already exists?** Power BI needs a local desktop install and a `.pbix` file; Streamlit is one `pip install` away, reads the same aggregated tables the ETL already produces, and is easy to demo or share as a link — useful when the audience doesn't have Power BI Desktop.

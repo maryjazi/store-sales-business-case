@@ -151,6 +151,7 @@ Also writes `reports/eda_insights.json`
 | **Write-local-copy-remote** | phase0 writes to /tmp then copies (performance) |
 | **Idempotent phases** | Each phase overwrites its outputs on re-run |
 | **Phase isolation** | Each script runnable independently given prior outputs |
+| **Containerized packaging** | `Dockerfile` + GitLab CI `docker-build`/`docker-push` stages for reproducible runs |
 
 ---
 
@@ -186,6 +187,10 @@ python etl/phase4_forecasting.py
 python etl/phase4b_generate_forecast.py
 python etl/phase5_powerbi_export.py
 pytest tests/ -v
+
+# Or run the test suite inside Docker (same environment as CI)
+docker build -t sales-forecast .
+docker run --rm -v "$(pwd)/data:/app/data" sales-forecast
 ```
 
 ---

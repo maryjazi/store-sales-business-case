@@ -42,7 +42,7 @@
 |---|---|---|
 | C-07 | 2-core compute environment for model training | 900K-row sample; document full retrain recommendation |
 | C-08 | Batch pipeline only (no streaming) | Acceptable for v1 portfolio project |
-| C-09 | Power BI .pbix built locally, not in CI | Guide + data export automated |
+| C-09 | Power BI .pbix built locally, not in CI | Guide + data export automated; Streamlit dashboard (`dashboard/app.py`) covers the same KPIs without a manual desktop build step |
 | C-10 | Single developer / analyst | Documentation-heavy for handoff |
 
 ### 2.3 Business constraints
@@ -72,6 +72,8 @@
 | LightGBM, pandas, pyarrow | Technical | ✅ requirements.txt |
 | Power BI Desktop | Tool | ✅ User-installed |
 | GitLab CI runner | Infrastructure | ✅ .gitlab-ci.yml |
+| Docker Engine (CI + optional local) | Technical | ✅ Dockerfile, CI `docker-build` stage |
+| Streamlit, Plotly | Technical | ✅ requirements.txt |
 
 ---
 

@@ -47,7 +47,7 @@ flowchart LR
 | **Reports** | `reports/` | Human-readable outputs, charts, submission file |
 | **Dashboard** | `dashboard/` | Power BI star-schema export + build guide |
 | **Tests** | `tests/` | Unit and data-quality checks |
-| **CI** | `.gitlab-ci.yml` | Automated test stage on every push |
+| **CI** | `.gitlab-ci.yml` | Automated test stage on every push; builds & runs a Docker image (`docker-build`), pushes to the registry on `main` (`docker-push`) |
 
 ## Design principles
 
@@ -60,3 +60,5 @@ flowchart LR
 
 - **Python 3.10+** with pandas, LightGBM, matplotlib
 - **Power BI Desktop** (local) for dashboard build — data export is automated, `.pbix` is built manually
+- **Docker** — containerized environment (`Dockerfile`) for reproducible runs and CI
+- **Streamlit + Plotly** — interactive dashboard alternative (`dashboard/app.py`), no desktop app required

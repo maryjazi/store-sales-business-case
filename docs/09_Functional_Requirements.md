@@ -90,6 +90,7 @@ Functional requirements describe **what the system must do** — implemented pri
 | FR-604 | Add `family_group` business grouping to dim_family | Should | phase5 |
 | FR-605 | Document DAX measures and page layout | Must | `dashboard/POWERBI_GUIDE.md` |
 | FR-606 | Support year/city/type/category slicers | Should | Dashboard design doc |
+| FR-607 | Provide an interactive Streamlit dashboard reading the same KPI/star-schema outputs | Should | `dashboard/app.py` |
 
 ---
 
@@ -100,6 +101,8 @@ Functional requirements describe **what the system must do** — implemented pri
 | FR-701 | Unit tests for feature engineering | Must | `tests/test_features.py` |
 | FR-702 | Data quality tests on processed data | Must | `tests/test_data_quality.py` |
 | FR-703 | Automated test run on GitLab CI | Must | `.gitlab-ci.yml` |
+| FR-704 | Build and run the pipeline inside a Docker image as part of CI | Must | `Dockerfile`, `.gitlab-ci.yml` (`docker-build` stage) |
+| FR-705 | Push the built image to the GitLab Container Registry on `main` | Should | `.gitlab-ci.yml` (`docker-push` stage) |
 
 ---
 
@@ -113,6 +116,7 @@ Functional requirements describe **what the system must do** — implemented pri
 | Forecast | RMSLE ≤ 0.47 internal; ≤ 0.50 Kaggle |
 | Tests | All pytest cases pass |
 | Dashboard data | 5 tables in dashboard/data/ |
+| Docker image | Builds successfully and runs the pytest suite |
 
 ---
 
