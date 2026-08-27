@@ -46,6 +46,5 @@ Project documentation for Store Sales Analytics & Forecasting.
 |---|---|
 | Business Case | [reports/business_case.md](../reports/business_case.md) |
 | KPI Report | [reports/kpi_report.md](../reports/kpi_report.md) |
-| Power BI Build Guide | [dashboard/POWERBI_GUIDE.md](../dashboard/POWERBI_GUIDE.md) |
 | SQL Scripts | [sql/](../sql/) |
 | Portfolio Summary | [PORTFOLIO_SUMMARY.md](../PORTFOLIO_SUMMARY.md) |

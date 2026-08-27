@@ -74,8 +74,8 @@
 Total Sales = SUM(fact_sales_actual[sales])
 Total Forecast Sales = SUM(fact_sales_forecast[forecast_sales])
 Avg Daily Sales = DIVIDE([Total Sales], DISTINCTCOUNT(fact_sales_actual[date]))
-Holiday Uplift % = /* see dashboard/POWERBI_GUIDE.md */
-Payday Uplift % = /* see dashboard/POWERBI_GUIDE.md */
+Holiday Uplift % = /* not yet defined */
+Payday Uplift % = /* not yet defined */
 Sales Rank by Store = RANKX(ALL(dim_store[store_nbr]), [Total Sales], , DESC)
 ```
 

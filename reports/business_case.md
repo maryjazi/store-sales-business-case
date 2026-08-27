@@ -111,4 +111,4 @@ The trained model was used to generate a 16-day forward forecast for the actual 
 - Full KPI tables: `reports/kpi_summary.csv`, `data/processed/kpi_store.csv`, `kpi_category.csv`, `kpi_monthly.csv`
 - Model artifacts: `data/processed/lightgbm_model.txt`, `reports/model_comparison.json`, `reports/feature_importance.csv`
 - Forecast output: `reports/forecast_submission.csv`, `data/processed/forecast_detail.parquet`
-- Power BI data model and build guide: `dashboard/data/`, `dashboard/POWERBI_GUIDE.md`
+- Power BI data model: `dashboard/data/` (build guide: `docs/17_Dashboard_Design.md`)

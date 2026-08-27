@@ -2,8 +2,7 @@
 
 **Version:** 1.0  
 **Tool:** Power BI Desktop  
-**Data source:** `dashboard/data/` (exported by `etl/phase5_powerbi_export.py`)  
-**Build guide:** [dashboard/POWERBI_GUIDE.md](../dashboard/POWERBI_GUIDE.md)
+**Data source:** `dashboard/data/` (exported by `etl/phase5_powerbi_export.py`)
 
 ---
 
@@ -44,8 +43,6 @@
 | `Holiday Uplift %` | Holiday vs regular day avg |
 | `Payday Uplift %` | Payday vs regular day avg |
 | `Sales Rank by Store` | Rank stores by total sales |
-
-Full DAX definitions: `dashboard/POWERBI_GUIDE.md` § DAX Measures
 
 ---
 

@@ -2,7 +2,7 @@
 
 A retail analytics project built on the [Kaggle "Store Sales – Time Series Forecasting"](https://www.kaggle.com/competitions/store-sales-time-series-forecasting) dataset. Combines sales analytics, demand forecasting, KPI reporting, and a Power BI dashboard to support business decision-making for a multi-store retail chain (Corporación Favorita, Ecuador).
 
-**Quick links:** [Business Case](reports/business_case.md) · [KPI Report](reports/kpi_report.md) · [Power BI Build Guide](dashboard/POWERBI_GUIDE.md) · [Forecast Output](reports/forecast_submission.csv)
+**Quick links:** [Business Case](reports/business_case.md) · [KPI Report](reports/kpi_report.md) · [Forecast Output](reports/forecast_submission.csv)
 
 ## Business Problem
 
@@ -81,7 +81,6 @@ store-sales-time-series-forecasting/
 │   │   ├── dim_store.csv
 │   │   ├── dim_date.csv
 │   │   └── dim_family.csv
-│   ├── POWERBI_GUIDE.md        # step-by-step dashboard build guide
 │   ├── store_sales.pbix        # Power BI file (built locally, not committed)
 │   └── screenshots/            # dashboard screenshots for README / portfolio
 │
@@ -156,8 +155,8 @@ store-sales-time-series-forecasting/
 
 - Star schema exported to `dashboard/data/`: 2 fact tables (`fact_sales_actual`, `fact_sales_forecast`) + 3 dimension tables (`dim_store`, `dim_date`, `dim_family`, the last with a business-friendly `family_group` for drill-down).
 - Fact tables are Parquet (Power BI Desktop reads Parquet natively via Get Data); dimensions are CSV.
-- Full build guide with relationships, DAX measures, page layout, and slicers: `dashboard/POWERBI_GUIDE.md`.
-- Actual `.pbix` file and screenshots are built locally in Power BI Desktop (not generated here) — see the guide.
+- Relationships, DAX measures, page layout, and slicers are documented in `docs/17_Dashboard_Design.md`.
+- Actual `.pbix` file and screenshots are built locally in Power BI Desktop (not generated here).
 
 ## Key Results
 
@@ -202,7 +201,7 @@ python etl/phase5_powerbi_export.py          # star-schema export -> dashboard/d
 pytest tests/ -v                             # run unit & data-quality tests
 ```
 
-Then open Power BI Desktop and follow `dashboard/POWERBI_GUIDE.md` to build the dashboard.
+Then open Power BI Desktop and follow `docs/17_Dashboard_Design.md` to build the dashboard.
 
 ## Run with Docker
 

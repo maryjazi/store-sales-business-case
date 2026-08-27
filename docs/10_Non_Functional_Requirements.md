@@ -67,7 +67,6 @@
 |---|---|---|
 | NFR-22 | Business case readable by non-technical stakeholders | `reports/business_case.md` |
 | NFR-23 | Dashboard self-service filtering | Slicers: year, city, type, category group |
-| NFR-24 | Step-by-step Power BI build guide | `dashboard/POWERBI_GUIDE.md` (Persian) |
 | NFR-25 | KPI definitions documented | `06_KPI_Definition.md` |
 
 ---

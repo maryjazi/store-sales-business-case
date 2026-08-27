@@ -88,7 +88,7 @@ Functional requirements describe **what the system must do** — implemented pri
 | FR-602 | Export fact_sales_forecast (Parquet) | Must | phase5 |
 | FR-603 | Export dim_store, dim_date, dim_family (CSV) | Must | phase5 |
 | FR-604 | Add `family_group` business grouping to dim_family | Should | phase5 |
-| FR-605 | Document DAX measures and page layout | Must | `dashboard/POWERBI_GUIDE.md` |
+| FR-605 | Document DAX measures and page layout | Must | `docs/17_Dashboard_Design.md` |
 | FR-606 | Support year/city/type/category slicers | Should | Dashboard design doc |
 | FR-607 | Provide an interactive Streamlit dashboard reading the same KPI/star-schema outputs | Should | `dashboard/app.py` |
 
