@@ -33,6 +33,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 | 18 | [Project Roadmap](18_Project_Roadmap.md) | Timeline, milestones, v2 plan |
 | 19 | [Simulation Design](19_Simulation_Design.md) | Commercial simulation layer: rules, price book, provenance |
 | 20 | [Procurement Simulation](20_Procurement_Simulation.md) | Suppliers, purchase orders, receipts: rules and scenario bounds |
+| 21 | [Inventory Simulation](21_Inventory_Simulation.md) | Inventory derived from receipts: equation, audit, merchandising KPIs |
 
 ## Technical reference (legacy / quick links)
 

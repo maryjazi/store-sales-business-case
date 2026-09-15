@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (20-document BA/DS pack)
-│   ├── README.md               # docs index → 01–20
-│   ├── 01_Project_Charter.md … 20_Procurement_Simulation.md
+├── docs/                       # project documentation (21-document BA/DS pack)
+│   ├── README.md               # docs index → 01–21
+│   ├── 01_Project_Charter.md … 21_Inventory_Simulation.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -56,7 +56,8 @@ store-sales-time-series-forecasting/
 │   ├── phase4b_generate_forecast.py
 │   ├── phase5_powerbi_export.py
 │   ├── phase6_simulation_layer.py   # simulated commercial layer (price, cost, margin)
-│   └── phase7_procurement.py        # simulated suppliers, purchase orders, receipts
+│   ├── phase7_procurement.py        # simulated suppliers, purchase orders, receipts
+│   └── phase8_inventory.py          # inventory derived from the receipt flow
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -117,7 +118,7 @@ competition data does not contain (price, cost, inventory, suppliers) — see
 |---|---|---|---|
 | B1 | Commercial simulation layer (price, discount, cost, margin) | `phase6_simulation_layer.py` | ✅ |
 | B6 | Procurement & supplier foundation (PO, lead time, spend) | `phase7_procurement.py` | ✅ |
-| B4 | Inventory & merchandising (sell-through, turnover, WoS, GMROI, OOS) | `phase8_inventory.py` | ☐ |
+| B4 | Inventory & merchandising (sell-through, turnover, WoS, GMROI, OOS) | `phase8_inventory.py` | ✅ |
 | B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ☐ |
 | B3 | Scenario-based price elasticity | `phase10_elasticity.py` | ☐ |
 | B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ☐ |
@@ -200,6 +201,16 @@ because procurement has to exist before inventory can be derived from it.
 - Scenario result: **simulated** spend of 1.77B USD over 294,535 PO lines in 135,541 orders, 86.5% on-time and 93.7% in-full delivery, average lead time 8.1 days against 7.6 planned. Declared bounds (OTD 80–92%, in-full 90–97%) are asserted in the test suite.
 - Rules, supplier master and limits: [docs/20_Procurement_Simulation.md](docs/20_Procurement_Simulation.md).
 
+## Data Notes (from Phase 8 — Inventory & Merchandising)
+
+- Stock on hand is **derived**, never invented: every unit arrived through a phase-7 purchase order. The full lineage is reconstructable per store × family × date — `PO → Receipt → Opening → Observed Units → Fulfilled → Unfulfilled → Closing`.
+- The equation `closing = opening + receipts − fulfilled`, `opening(t+1) = closing(t)` closes exactly, with **no balancing plug and no hidden stock adjustment**. Fulfilment is capped at availability so stock never goes negative, but a shortage is never absorbed either — it surfaces as `unfulfilled_units_sim`. The script aborts, and the test suite fails, if the chain does not reconcile. The seven lineage columns are stored as float64 because the audit has to hold in the delivered file, not only in memory.
+- **Observed sales are not demand.** The dataset has neither an inventory nor a demand column, so a gap between observed quantity and simulated availability is a shortage of *this* supply chain — never Favorita's historical lost sales. Every rate is a *simulated* OOS rate, and a test fails on any column name containing "lost", "missed" or "forgone".
+- Store-side fulfilment is named `simulated_demand_fulfillment_rate_pct` so it can never be confused with the supplier OTD and in-full rates of phase 7. They measure different things and stay in different layers.
+- Scenario result: 98.5% simulated demand fulfillment rate, 1.6% simulated OOS day rate, sell-through 93–99%, weeks of supply 3–5 for slow movers, stock turnover ≈ 29–33 p.a. for fast movers.
+- Building this phase is what exposed the phase-7 ordering flaw fixed in the previous commit. That is the point of deriving inventory instead of generating it: the downstream result corrected an upstream business rule.
+- Equation, audit, KPI definitions and limits: [docs/21_Inventory_Simulation.md](docs/21_Inventory_Simulation.md).
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -241,6 +252,7 @@ python etl/phase4b_generate_forecast.py      # score the model on prepared_test.
 python etl/phase5_powerbi_export.py          # star-schema export -> dashboard/data/
 python etl/phase6_simulation_layer.py        # simulated commercial layer -> data/processed/
 python etl/phase7_procurement.py             # simulated suppliers / POs / receipts
+python etl/phase8_inventory.py               # inventory derived from receipts -> KPIs
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```

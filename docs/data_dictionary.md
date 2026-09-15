@@ -62,6 +62,16 @@
 | `dim_supplier_sim` | Supplier master: lead time, reliability, price factor | CSV |
 | `dim_family_sourcing_sim` | Primary and secondary supplier per family | CSV |
 
+## Inventory layer (`data/processed/`, phase 8 — derived from phase-7 receipts)
+
+| Table | Role | Format |
+|---|---|---|
+| `fact_inventory_sim` | Daily opening/closing stock, fulfilled and unfulfilled units, inventory value | Parquet |
+| `kpi_inventory_sim` | Merchandising KPIs per family | CSV |
+| `kpi_inventory_store_sim` | Merchandising KPIs per store | CSV |
+
+Equation, audit and KPI definitions: [21_Inventory_Simulation.md](21_Inventory_Simulation.md).
+
 Rules and provenance: [20_Procurement_Simulation.md](20_Procurement_Simulation.md).
 
 Rules and provenance: [19_Simulation_Design.md](19_Simulation_Design.md).
