@@ -37,15 +37,21 @@ way.
 | # | Rule | Detail |
 |---|---|---|
 | R1 | Supplier master | 14 suppliers in 6 sourcing groups; every family has a **primary and a secondary** supplier inside its group, so the same family can be compared across suppliers — which is what makes purchase price variance meaningful |
-| R2 | Ordering policy | weekly replenishment: for demand week W the planner orders `next-week demand × (1 + forecast error) × 1.05`, rounded up to the supplier's order multiple; orders split 70/30 between primary and secondary |
+| R2 | Ordering policy | weekly replenishment against `next-week demand × (1 + forecast error)`, **no safety margin**, lot-sized against the family's planning order multiple: demand accumulates across weeks and an order is raised only when it crosses the next multiple. Orders split 70/30 between primary and secondary supplier |
 | R3 | Forecast error | `N(0, 15%)` — the planner does not know next week exactly. **This error, not a random stock number, is what produces overstock and stockouts in phase 8** |
 | R4 | Order timing | `order_date = start of demand week − the supplier's planned lead time`, so a reliable supplier lands the goods just as the week opens |
 | R5 | Lead time | most deliveries hit the planned lead time; a supplier-specific share runs late by `1 + Poisson(σ)` days, a few arrive a day early. `on_time = receipt ≤ requested delivery` |
 | R6 | Fill rate | supplier-specific (85–97% of lines in full); short deliveries arrive 5–30% short |
 | R7 | Purchase price | `standard cost × supplier price factor × (1 ± 2%)`; `PPV = (purchase price − standard cost) × received qty` |
 
-A week whose forecast comes out at zero simply produces no purchase order — a zero-quantity
-PO line is not a document a planner would raise.
+A week whose forecast comes out at zero, or whose accumulated demand has not yet reached the
+next order multiple, simply produces no purchase order — a zero-quantity PO line is not a
+document a planner would raise.
+
+**Why R2 has no safety margin.** The first version ordered `demand × 1.05` and charged the
+minimum order quantity every week. Phase 8 then derived the consequence: slow-moving families
+accumulated stock indefinitely — BABY CARE reached 213 weeks of supply at 20% sell-through.
+Lot sizing without a safety margin replaced it. See [21_Inventory_Simulation.md](21_Inventory_Simulation.md) §5.
 
 ---
 
@@ -88,12 +94,12 @@ a real company.
 
 | Check | Result (all simulated) |
 |---|---|
-| PO lines | 322,077 across 143,006 purchase orders |
-| Total spend | 1.87B USD |
-| Purchase price variance | −0.95M USD (−0.05% of spend) |
-| On-time delivery | 86.2% |
-| In-full delivery | 93.6% |
-| Average lead time | 8.3 days (planned 7.8) |
+| PO lines | 294,535 across 135,541 purchase orders |
+| Total spend | 1.77B USD |
+| Purchase price variance | −0.91M USD (−0.05% of spend) |
+| On-time delivery | 86.5% |
+| In-full delivery | 93.7% |
+| Average lead time | 8.1 days (planned 7.6) |
 | Best / worst supplier OTD | 94% (local produce) / 68% (overseas apparel) |
 
 **Declared scenario bounds:** chain OTD 80–92%, in-full 90–97%. Asserted in

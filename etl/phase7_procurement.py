@@ -20,9 +20,10 @@ Rules:
   1. supplier master     - 14 suppliers across 6 sourcing groups; every family has a primary
                            and a secondary supplier in its group, so the same family can be
                            compared across suppliers (that is what makes PPV meaningful)
-  2. ordering policy     - weekly replenishment: for demand week W the planner orders
-                           next-week demand x (1 + forecast error) x safety factor, rounded
-                           up to the supplier's order multiple
+  2. ordering policy     - weekly replenishment against next-week demand x (1 + forecast
+                           error), with no safety margin, lot-sized against the family's
+                           planning order multiple: demand accumulates across weeks and an
+                           order is raised only when it crosses the next multiple
   3. forecast error      - N(0, 15%): the planner does not know next week exactly. This error,
                            not a random stock number, is what later produces overstock and
                            out-of-stock situations in phase 8
@@ -52,7 +53,7 @@ os.makedirs(LOCAL, exist_ok=True)
 
 SEED = 42
 FORECAST_ERROR_SD = 0.15
-SAFETY_FACTOR = 1.05
+SAFETY_FACTOR = 1.00           # no safety margin: the planner orders to forecast
 PRIMARY_SHARE = 0.70          # share of orders going to the primary supplier
 
 # sourcing group -> families
@@ -157,9 +158,18 @@ def main():
 
     # ---- 2/3. ordering policy with planner forecast error ----
     forecast = orders["demand_next_week"] * (1 + rng.normal(0, FORECAST_ERROR_SD, n))
-    target = np.maximum(forecast * SAFETY_FACTOR, 0.0)
-    ordered = np.ceil(target / multiple) * multiple
-    ordered = np.where(target <= 0, 0.0, np.maximum(ordered, multiple))
+    target = pd.Series(np.maximum(forecast * SAFETY_FACTOR, 0.0), index=orders.index)
+
+    # Lot sizing against the family's planning order multiple: demand is accumulated across
+    # weeks and an order is raised only when it crosses the next multiple. Ordering the MOQ
+    # every week would bury slow movers under years of stock; skipping weeks until the
+    # quantity is worth ordering is what a planner actually does.
+    plan_multiple = (orders["family"].map(src_map["primary_supplier_id"])
+                     .map(sup["order_multiple"]).astype("float64"))
+    grp = [orders["store_nbr"], orders["family"]]
+    cum_target = target.groupby(grp).cumsum()
+    cum_ordered = np.floor(cum_target / plan_multiple) * plan_multiple
+    ordered = (cum_ordered - cum_ordered.groupby(grp).shift(1).fillna(0.0)).to_numpy()
 
     # ---- 4/5. dates and lead time ----
     order_date = orders["next_week_start"] - pd.to_timedelta(planned_lt, unit="D")

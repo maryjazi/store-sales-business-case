@@ -195,9 +195,9 @@ because procurement has to exist before inventory can be derived from it.
 
 - Suppliers, purchase orders and receipts do not exist in the competition data, so this layer creates them: 14 suppliers in 6 sourcing groups, every family dual-sourced inside its group so the same family can be compared across suppliers — which is what makes purchase price variance mean anything.
 - The **demand signal is real** (`units`); the ordering policy, forecast error, lead times, fill rates and prices are simulated. The whole table is marked by its name (`fact_purchase_order_sim`, rule P-07) rather than by a suffix on every column.
-- Orders are placed weekly for the following week, with an `N(0, 15%)` planner forecast error. That error — not a random stock number — is what will produce genuine overstock and out-of-stock situations once phase 8 derives inventory from these receipts.
+- Orders are placed weekly for the following week with an `N(0, 15%)` planner forecast error and **no safety margin**, lot-sized against the family's planning order multiple: demand accumulates across weeks and an order is raised only when it crosses the next multiple. That forecast error — not a random stock number — is what produces genuine overstock and out-of-stock situations once phase 8 derives inventory from these receipts.
 - The supplier master encodes a cost-versus-service tension on purpose, otherwise the analysis has nothing to find. A test guards the design contract — differentiated prices and service levels, all parameters inside documented bounds, at least one cheaper-but-less-reliable pair — but deliberately does not assert which suppliers rank worst. That is for the analysis to find, not for the test to impose.
-- Scenario result: **simulated** spend of 1.87B USD over 322,077 PO lines in 143,006 orders, 86.2% on-time and 93.6% in-full delivery, average lead time 8.3 days against 7.8 planned. Declared bounds (OTD 80–92%, in-full 90–97%) are asserted in the test suite.
+- Scenario result: **simulated** spend of 1.77B USD over 294,535 PO lines in 135,541 orders, 86.5% on-time and 93.7% in-full delivery, average lead time 8.1 days against 7.6 planned. Declared bounds (OTD 80–92%, in-full 90–97%) are asserted in the test suite.
 - Rules, supplier master and limits: [docs/20_Procurement_Simulation.md](docs/20_Procurement_Simulation.md).
 
 ## Key Results

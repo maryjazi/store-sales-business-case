@@ -38,7 +38,7 @@ After each phase, confirm the expected artifact exists and row counts match READ
 - Phase 1: cleaned shape **3,000,888 × 30**; prepared test **28,512 rows**
 - Phase 4: validation RMSLE ≈ **0.465** (LightGBM)
 - Phase 6: commercial layer **3,000,888 rows**, chain gross margin ≈ **22.6%** (test-enforced band: 20–28%)
-- Phase 7: **322,077 PO lines**, on-time delivery ≈ **86.2%** (test-enforced band: 80–92%)
+- Phase 7: **294,535 PO lines**, on-time delivery ≈ **86.5%** (test-enforced band: 80–92%)
 
 ## SQL alternative
 
