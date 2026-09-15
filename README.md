@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (19-document BA/DS pack)
-│   ├── README.md               # docs index → 01–19
-│   ├── 01_Project_Charter.md … 19_Simulation_Design.md
+├── docs/                       # project documentation (20-document BA/DS pack)
+│   ├── README.md               # docs index → 01–20
+│   ├── 01_Project_Charter.md … 20_Procurement_Simulation.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -55,7 +55,8 @@ store-sales-time-series-forecasting/
 │   ├── phase4_forecasting.py
 │   ├── phase4b_generate_forecast.py
 │   ├── phase5_powerbi_export.py
-│   └── phase6_simulation_layer.py   # simulated commercial layer (price, cost, margin)
+│   ├── phase6_simulation_layer.py   # simulated commercial layer (price, cost, margin)
+│   └── phase7_procurement.py        # simulated suppliers, purchase orders, receipts
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -115,7 +116,7 @@ competition data does not contain (price, cost, inventory, suppliers) — see
 | Step | Description | Script | Status |
 |---|---|---|---|
 | B1 | Commercial simulation layer (price, discount, cost, margin) | `phase6_simulation_layer.py` | ✅ |
-| B6 | Procurement & supplier foundation (PO, lead time, spend) | `phase7_procurement.py` | ☐ |
+| B6 | Procurement & supplier foundation (PO, lead time, spend) | `phase7_procurement.py` | ✅ |
 | B4 | Inventory & merchandising (sell-through, turnover, WoS, GMROI, OOS) | `phase8_inventory.py` | ☐ |
 | B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ☐ |
 | B3 | Scenario-based price elasticity | `phase10_elasticity.py` | ☐ |
@@ -190,6 +191,15 @@ because procurement has to exist before inventory can be derived from it.
 - Every monetary figure carries its provenance wherever it appears — "simulated revenue", never "revenue". That rule (P-06) applies to reports, dashboard KPI titles and CV bullets alike.
 - Full rule set, price book, and the limits of what may be claimed from it: [docs/19_Simulation_Design.md](docs/19_Simulation_Design.md).
 
+## Data Notes (from Phase 7 — Procurement Simulation)
+
+- Suppliers, purchase orders and receipts do not exist in the competition data, so this layer creates them: 14 suppliers in 6 sourcing groups, every family dual-sourced inside its group so the same family can be compared across suppliers — which is what makes purchase price variance mean anything.
+- The **demand signal is real** (`units`); the ordering policy, forecast error, lead times, fill rates and prices are simulated. The whole table is marked by its name (`fact_purchase_order_sim`, rule P-07) rather than by a suffix on every column.
+- Orders are placed weekly for the following week, with an `N(0, 15%)` planner forecast error. That error — not a random stock number — is what will produce genuine overstock and out-of-stock situations once phase 8 derives inventory from these receipts.
+- The supplier master encodes a cost-versus-service tension on purpose, otherwise the analysis has nothing to find. A test guards the design contract — differentiated prices and service levels, all parameters inside documented bounds, at least one cheaper-but-less-reliable pair — but deliberately does not assert which suppliers rank worst. That is for the analysis to find, not for the test to impose.
+- Scenario result: **simulated** spend of 1.87B USD over 322,077 PO lines in 143,006 orders, 86.2% on-time and 93.6% in-full delivery, average lead time 8.3 days against 7.8 planned. Declared bounds (OTD 80–92%, in-full 90–97%) are asserted in the test suite.
+- Rules, supplier master and limits: [docs/20_Procurement_Simulation.md](docs/20_Procurement_Simulation.md).
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -230,6 +240,7 @@ python etl/phase4_forecasting.py             # train + validate forecasting mode
 python etl/phase4b_generate_forecast.py      # score the model on prepared_test.parquet -> forecast files
 python etl/phase5_powerbi_export.py          # star-schema export -> dashboard/data/
 python etl/phase6_simulation_layer.py        # simulated commercial layer -> data/processed/
+python etl/phase7_procurement.py             # simulated suppliers / POs / receipts
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```

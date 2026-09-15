@@ -54,4 +54,14 @@
 | `dim_product_cost` | Base price and cost ratio per family | CSV |
 | `dim_store_price_index` | Store-level price index | CSV |
 
+## Procurement layer (`data/processed/`, phase 7 — fully simulated)
+
+| Table | Role | Format |
+|---|---|---|
+| `fact_purchase_order_sim` | PO lines: order/receipt dates, quantities, prices, PPV, service flags | Parquet |
+| `dim_supplier_sim` | Supplier master: lead time, reliability, price factor | CSV |
+| `dim_family_sourcing_sim` | Primary and secondary supplier per family | CSV |
+
+Rules and provenance: [20_Procurement_Simulation.md](20_Procurement_Simulation.md).
+
 Rules and provenance: [19_Simulation_Design.md](19_Simulation_Design.md).

@@ -1,0 +1,15 @@
+supplier_id,supplier_name,sourcing_group,planned_lead_time_days,lead_time_sigma_days,late_rate,in_full_rate,price_factor,order_multiple,families_primary
+S01,Local Fresh Produce Co-op A,FRESH,2,1.0,0.06,0.97,1.0,10,3
+S02,Local Fresh Produce Co-op B,FRESH,3,1.0,0.1,0.94,0.975,10,3
+S03,Regional Meat & Dairy Hub,FRESH,4,2.0,0.12,0.95,1.02,25,3
+S04,National Packaged Goods Ltd,PACKAGED,6,2.0,0.08,0.96,0.99,50,2
+S05,Regional Beverage Distributor,PACKAGED,5,2.0,0.14,0.93,1.015,50,2
+S06,Frozen & Chilled Logistics,PACKAGED,7,3.0,0.11,0.95,1.005,25,1
+S07,Household Care Wholesaler,HOUSEHOLD,8,3.0,0.09,0.96,0.985,25,3
+S08,Personal Care Distributor,HOUSEHOLD,9,3.0,0.16,0.92,1.03,25,3
+S09,Import Hardline Vendor,HARDLINE,16,6.0,0.28,0.88,0.96,10,4
+S10,Regional Hardware Supplier,HARDLINE,9,3.0,0.1,0.95,1.045,10,3
+S11,Overseas Apparel Manufacturer,APPAREL,21,7.0,0.32,0.85,0.93,20,2
+S12,Regional Apparel Agent,APPAREL,11,4.0,0.13,0.94,1.06,20,1
+S13,Publishing & Stationery Dist.,MEDIA,7,2.0,0.08,0.96,1.0,20,2
+S14,Import Stationery Vendor,MEDIA,14,5.0,0.24,0.89,0.95,40,1

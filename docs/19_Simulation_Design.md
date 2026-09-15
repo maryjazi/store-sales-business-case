@@ -39,6 +39,7 @@ These hold for the whole of Track 2 and are enforced by `tests/test_simulation_l
 | P-03 | The real fact table `fact_sales_actual` is never modified; the commercial layer is a separate table |
 | P-04 | Simulation is rule-based and deterministic (`SEED = 42`); the same input always yields the same layer |
 | P-05 | No output of this project claims a real Favorita price, cost, margin or inventory figure |
+| P-07 | A table whose **name** ends in `_sim` is simulated in its entirety (e.g. `fact_purchase_order_sim`); inside such a table only `store_nbr` and `family` are real join keys |
 | P-06 | **Every monetary figure is labelled as simulated wherever it appears** — report, dashboard KPI title or tooltip, CV bullet. "Simulated revenue: $2.30B", never "Revenue: $2.30B" |
 
 ---

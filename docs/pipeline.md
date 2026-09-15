@@ -13,6 +13,7 @@ python etl/phase4_forecasting.py
 python etl/phase4b_generate_forecast.py
 python etl/phase5_powerbi_export.py
 python etl/phase6_simulation_layer.py
+python etl/phase7_procurement.py
 ```
 
 ## Phase map
@@ -27,6 +28,7 @@ python etl/phase6_simulation_layer.py
 | 4b | `phase4b_generate_forecast.py` | `reports/forecast_submission.csv`, `forecast_detail.parquet` |
 | 5 | `phase5_powerbi_export.py` | `dashboard/data/*` star schema |
 | 6 | `phase6_simulation_layer.py` | `fact_sales_commercial.parquet`, `dim_product_cost.csv`, `dim_store_price_index.csv` |
+| 7 | `phase7_procurement.py` | `fact_purchase_order_sim.parquet`, `dim_supplier_sim.csv`, `dim_family_sourcing_sim.csv` |
 
 ## Validation checkpoints
 
@@ -36,6 +38,7 @@ After each phase, confirm the expected artifact exists and row counts match READ
 - Phase 1: cleaned shape **3,000,888 × 30**; prepared test **28,512 rows**
 - Phase 4: validation RMSLE ≈ **0.465** (LightGBM)
 - Phase 6: commercial layer **3,000,888 rows**, chain gross margin ≈ **22.6%** (test-enforced band: 20–28%)
+- Phase 7: **322,077 PO lines**, on-time delivery ≈ **86.2%** (test-enforced band: 80–92%)
 
 ## SQL alternative
 

@@ -32,6 +32,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 | 17 | [Dashboard Design](17_Dashboard_Design.md) | Power BI pages, DAX, slicers |
 | 18 | [Project Roadmap](18_Project_Roadmap.md) | Timeline, milestones, v2 plan |
 | 19 | [Simulation Design](19_Simulation_Design.md) | Commercial simulation layer: rules, price book, provenance |
+| 20 | [Procurement Simulation](20_Procurement_Simulation.md) | Suppliers, purchase orders, receipts: rules and scenario bounds |
 
 ## Technical reference (legacy / quick links)
 
