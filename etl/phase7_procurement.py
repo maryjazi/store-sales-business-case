@@ -41,10 +41,11 @@ Outputs (data/processed/):
   fact_purchase_order_sim.parquet - one row per PO line (po_id x store x family)
 """
 import os
-import shutil
 
 import numpy as np
 import pandas as pd
+
+import schema
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
@@ -221,15 +222,13 @@ def main():
     out = out[out["ordered_qty"] > 0].reset_index(drop=True)
     print("dropped %d zero-quantity order candidates" % dropped)
 
-    out.to_parquet(f"{LOCAL}/fact_purchase_order_sim.parquet", index=False)
-    dim_supplier.merge(
+    supplier_out = dim_supplier.merge(
         family_sourcing.groupby("primary_supplier_id").size().rename("families_primary"),
         left_on="supplier_id", right_index=True, how="left",
-    ).fillna({"families_primary": 0}).to_csv(f"{LOCAL}/dim_supplier_sim.csv", index=False)
-    family_sourcing.to_csv(f"{LOCAL}/dim_family_sourcing_sim.csv", index=False)
-    for name in ("fact_purchase_order_sim.parquet", "dim_supplier_sim.csv",
-                 "dim_family_sourcing_sim.csv"):
-        shutil.copyfile(f"{LOCAL}/{name}", os.path.join(PROCESSED, name))
+    ).fillna({"families_primary": 0})
+    schema.write_table(out, "fact_purchase_order_sim.parquet", PROCESSED, LOCAL)
+    schema.write_table(supplier_out, "dim_supplier_sim.csv", PROCESSED, LOCAL)
+    schema.write_table(family_sourcing, "dim_family_sourcing_sim.csv", PROCESSED, LOCAL)
 
     # ---- summary (everything below is simulated) ----
     print("\n--- procurement scenario summary (all figures simulated; docs/20) ---")

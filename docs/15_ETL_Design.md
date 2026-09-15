@@ -155,6 +155,40 @@ Also writes `reports/eda_insights.json`
 
 ---
 
+## 3a. Schema contracts and shared audits
+
+Two defects taught this pipeline the same lesson twice: a number can be wrong in a file long
+before anyone notices, if the documentation, the writing code and the file on disk each hold
+their own idea of the truth.
+
+- `observed_units` was written as float32 while docs/21 declared float64. A float32 × float32
+  product in pandas stays float32, so a revenue reconciliation two phases later silently lost
+  the precision it depended on.
+- A margin bridge stopped adding up because `NaN` effects met a skipna sum.
+
+The answer in both cases is the same: **one declaration, enforced on the way out and
+validated on the way in.**
+
+| Module | Owns | Used by |
+|---|---|---|
+| `etl/schema.py` | column names, order and dtypes of all 12 phase 6–9 outputs; `write_table` enforces before persisting, `read_table` validates after reading | phases 6–9, `tests/test_schema_contract.py` |
+| `etl/audit.py` | the reconciliations that must hold: inventory lineage, revenue views, margin bridge | phases 8–9, `tests/test_inventory_layer.py`, `tests/test_pricing_layer.py`, `tests/test_pipeline_audits.py` |
+
+The ETL scripts and the test suite call the **same** implementation. A test that
+re-implements the formula it is checking ends up certifying its own arithmetic, so instead
+`tests/test_pipeline_audits.py` proves the audits are not vacuous by feeding them
+deliberately broken frames and requiring them to raise.
+
+`schema.LINEAGE_COLUMNS` marks the columns that carry an audit chain; narrowing one of them
+is reported as a contract violation, which is exactly the defect that started this.
+
+**Known technical debt.** Quantities would be safer as fixed-point `int64` milli-units, which
+would let the inventory equation close exactly instead of within a tolerance. That migration
+touches phases 6–9, the tests and the reports, so it is tracked as future hardening rather
+than folded into a structural refactor.
+
+---
+
 ## 4. SQL parallel path
 
 Warehouse-native queries in `sql/` replicate phase 0 merge and phase 3 KPIs for teams preferring SQL over Python.

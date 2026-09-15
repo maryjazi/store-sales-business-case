@@ -63,9 +63,11 @@ floating-point drift broke reconciliation at million-unit magnitudes. For the sa
 seven lineage columns are stored as float64 on disk: **the audit has to hold in the delivered
 artifact, not only in memory.**
 
-The script aborts if the equation fails to close, if an opening balance does not carry the
-previous closing balance, or if any stock goes negative. The same three checks run again in
-`tests/test_inventory_layer.py` against the written file.
+The checks live in `etl/audit.py` (`assert_inventory_lineage`) and are called by phase 8
+before it writes and by `tests/test_inventory_layer.py` against the written file — **one
+implementation, two callers**, so the test cannot drift into certifying its own arithmetic.
+That the audit is not vacuous is proved separately in `tests/test_pipeline_audits.py`, which
+feeds it broken frames and requires it to raise. See docs/15 §3a.
 
 ---
 

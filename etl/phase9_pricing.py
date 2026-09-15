@@ -43,6 +43,9 @@ import shutil
 import numpy as np
 import pandas as pd
 
+import audit
+import schema
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
 REPORTS = os.path.join(ROOT, "reports")
@@ -53,16 +56,13 @@ KEYS = ["date", "store_nbr", "family"]
 
 
 def load():
-    inv_path = os.path.join(PROCESSED, "fact_inventory_sim.parquet")
-    com_path = os.path.join(PROCESSED, "fact_sales_commercial.parquet")
-    for p in (inv_path, com_path):
-        if not os.path.exists(p):
-            raise SystemExit("missing %s - run phases 6-8 first" % os.path.basename(p))
-    inv = pd.read_parquet(inv_path, columns=KEYS + ["observed_units", "fulfilled_units_sim",
-                                                    "unfulfilled_units_sim", "closing_stock",
-                                                    "inventory_value_at_cost_sim"])
-    com = pd.read_parquet(com_path, columns=KEYS + ["list_price_sim", "net_price_sim",
-                                                    "discount_pct_sim", "unit_cost_sim"])
+    inv = schema.read_table("fact_inventory_sim.parquet", PROCESSED,
+                            columns=KEYS + ["observed_units", "fulfilled_units_sim",
+                                            "unfulfilled_units_sim", "closing_stock",
+                                            "inventory_value_at_cost_sim"])
+    com = schema.read_table("fact_sales_commercial.parquet", PROCESSED,
+                            columns=KEYS + ["list_price_sim", "net_price_sim",
+                                            "discount_pct_sim", "unit_cost_sim"])
     for d in (inv, com):
         d["family"] = d["family"].astype(str)
         for col in d.columns:
@@ -87,13 +87,9 @@ def main():
     df["list_revenue_sim"] = df["fulfilled_units_sim"] * df["list_price_sim"]
     df["markdown_value_sim"] = df["list_revenue_sim"] - df["revenue_sim"]
 
-    # ---- audit: the two views must reconcile exactly ----
-    residual = (df["demand_revenue_sim"] - df["revenue_sim"]
-                - df["unfulfilled_revenue_sim"]).abs()
-    if residual.max() > 1e-3:
-        raise SystemExit("revenue views do not reconcile: max residual %.6f" % residual.max())
-    print("revenue reconciles: demand-side = fulfilled + unfulfilled (max residual %.2e)"
-          % residual.max())
+    # ---- audit: one shared implementation, also used by the test suite ----
+    audit.assert_revenue_views(df, atol=1e-3)
+    print("revenue reconciles: demand-side = fulfilled + unfulfilled (etl/audit.py)")
 
     df["year"] = df["date"].dt.year
 
@@ -168,25 +164,17 @@ def main():
           % ((~assortment).sum(), assortment.sum()))
 
     effects = bridge[["volume_effect_sim", "price_effect_sim", "cost_effect_sim"]]
-    if effects.isna().any().any():
-        raise SystemExit("margin bridge contains undefined effects")
     bridge["bridge_residual"] = bridge["margin_change_sim"] - effects.sum(axis=1, skipna=False)
-    worst = bridge["bridge_residual"].abs().max()
-    scale = bridge["margin_change_sim"].abs().max()
-    if worst > max(1e-3, 1e-6 * scale):
-        raise SystemExit("margin bridge does not close: residual %.6f" % worst)
-    print("margin bridge closes: volume + price + cost = margin change (max residual %.2e)"
-          % worst)
+    audit.assert_margin_bridge(bridge, atol=1e-3)
+    print("margin bridge closes: volume + price + cost = margin change (etl/audit.py)")
     bridge = bridge[["family", "year", "bridge_case", "margin_change_sim",
                      "volume_effect_sim", "price_effect_sim", "cost_effect_sim",
                      "bridge_residual"]].round(2)
 
     # ---- write ----
-    kpi_family.to_csv(f"{LOCAL}/kpi_pricing_sim.csv", index=False)
-    kpi_store.to_csv(f"{LOCAL}/kpi_pricing_store_sim.csv", index=False)
-    bridge.to_csv(f"{LOCAL}/kpi_margin_bridge_sim.csv", index=False)
-    for name in ("kpi_pricing_sim.csv", "kpi_pricing_store_sim.csv", "kpi_margin_bridge_sim.csv"):
-        shutil.copyfile(f"{LOCAL}/{name}", os.path.join(PROCESSED, name))
+    schema.write_table(kpi_family, "kpi_pricing_sim.csv", PROCESSED, LOCAL)
+    schema.write_table(kpi_store, "kpi_pricing_store_sim.csv", PROCESSED, LOCAL)
+    schema.write_table(bridge, "kpi_margin_bridge_sim.csv", PROCESSED, LOCAL)
 
     tot = kpi_family[["demand_revenue_sim", "revenue_sim", "unfulfilled_revenue_sim",
                       "cogs_sim", "gross_margin_sim", "markdown_value_sim",

@@ -27,7 +27,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 |---|---|---|
 | 07 | [Data Requirements](07_Data_Requirements.md) | Source specs, quality rules, volumes |
 | 08 | [Data Dictionary](08_Data_Dictionary.md) | Column-level definitions |
-| 15 | [ETL Design](15_ETL_Design.md) | Pipeline phases and runbook |
+| 15 | [ETL Design](15_ETL_Design.md) | Pipeline phases, runbook, schema contracts and shared audits |
 | 16 | [Data Model](16_Data_Model.md) | Conceptual, logical, star schema |
 | 17 | [Dashboard Design](17_Dashboard_Design.md) | Power BI pages, DAX, slicers |
 | 18 | [Project Roadmap](18_Project_Roadmap.md) | Timeline, milestones, v2 plan |

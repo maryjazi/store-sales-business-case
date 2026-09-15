@@ -38,10 +38,11 @@ Outputs (data/processed/):
   dim_store_price_index.csv      - one row per store: price index
 """
 import os
-import shutil
 
 import numpy as np
 import pandas as pd
+
+import schema
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
@@ -179,12 +180,9 @@ def main():
     out["gross_margin_sim"] = (out["revenue_sim"] - out["cogs_sim"]).astype("float32")
 
     # ---- write ----
-    out.to_parquet(f"{LOCAL}/fact_sales_commercial.parquet", index=False)
-    dim_product.to_csv(f"{LOCAL}/dim_product_cost.csv", index=False)
-    dim_store.to_csv(f"{LOCAL}/dim_store_price_index.csv", index=False)
-    for name in ("fact_sales_commercial.parquet", "dim_product_cost.csv",
-                 "dim_store_price_index.csv"):
-        shutil.copyfile(f"{LOCAL}/{name}", os.path.join(PROCESSED, name))
+    schema.write_table(out, "fact_sales_commercial.parquet", PROCESSED, LOCAL)
+    schema.write_table(dim_product, "dim_product_cost.csv", PROCESSED, LOCAL)
+    schema.write_table(dim_store, "dim_store_price_index.csv", PROCESSED, LOCAL)
 
     # ---- validation summary ----
     rev, cogs = out["revenue_sim"].sum(), out["cogs_sim"].sum()

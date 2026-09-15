@@ -9,6 +9,9 @@ import os
 import pandas as pd
 import pytest
 
+import audit
+import schema
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
 KPI = os.path.join(PROCESSED, "kpi_pricing_sim.csv")
@@ -46,10 +49,9 @@ def test_every_modelled_column_is_marked_simulated(kpi):
                 assert col.endswith("_sim"), f"{os.path.basename(path)}: {col}"
 
 
-def test_revenue_views_reconcile(kpi):
-    gap = (kpi["demand_revenue_sim"] - kpi["revenue_sim"]
-           - kpi["unfulfilled_revenue_sim"]).abs()
-    assert gap.max() < 1.0
+def test_revenue_views_pass_the_shared_audit(kpi):
+    """Same implementation phase 9 runs before it writes (etl/audit.py)."""
+    audit.assert_revenue_views(kpi)
 
 
 def test_revenue_is_booked_on_fulfilled_quantity(kpi):
@@ -78,13 +80,9 @@ def test_chain_margin_and_markdown_match_the_declared_scenario_bounds(kpi):
     assert low <= markdown_pct <= high, f"chain markdown {markdown_pct:.1f}%"
 
 
-def test_margin_bridge_closes_for_every_row(bridge):
+def test_margin_bridge_passes_the_shared_audit(bridge):
+    audit.assert_margin_bridge(bridge)
     assert bridge["bridge_residual"].abs().max() < 1.0
-    recomputed = bridge[["volume_effect_sim", "price_effect_sim", "cost_effect_sim"]].sum(
-        axis=1, skipna=False)
-    assert ((recomputed - bridge["margin_change_sim"]).abs() < 1.0).all()
-    assert not bridge[["volume_effect_sim", "price_effect_sim",
-                       "cost_effect_sim"]].isna().any().any()
 
 
 def test_bridge_labels_assortment_changes_explicitly(bridge):

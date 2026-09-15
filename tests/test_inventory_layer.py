@@ -10,6 +10,9 @@ import os
 import pandas as pd
 import pytest
 
+import audit
+import schema
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
 FACT = os.path.join(PROCESSED, "fact_inventory_sim.parquet")
@@ -20,12 +23,8 @@ pytestmark = pytest.mark.skipif(
     reason="Inventory layer not generated - run etl/phase8_inventory.py first",
 )
 
+TABLE = "fact_inventory_sim.parquet"
 REAL_COLUMNS = {"date", "store_nbr", "family", "observed_units"}
-EXPECTED_COLUMNS = REAL_COLUMNS | {
-    "receipts", "opening_stock", "available", "fulfilled_units_sim", "unfulfilled_units_sim",
-    "closing_stock", "inventory_value_at_cost_sim", "fulfilled_revenue_sim",
-    "fulfilled_cogs_sim", "fulfilled_margin_sim", "stockout_day_sim", "zero_stock_day_sim",
-}
 
 # Declared scenario bounds from docs/21_Inventory_Simulation.md §5.
 # store-side demand fulfilment, NOT supplier OTD/in-full (those live in phase 7)
@@ -39,7 +38,9 @@ def inv():
 
 
 def test_schema_is_pinned(inv):
-    assert set(inv.columns) == EXPECTED_COLUMNS
+    """The column contract lives in etl/schema.py - this checks the file against it rather
+    than keeping a second copy of the column list here."""
+    assert schema.validate(inv, TABLE) == []
 
 
 def test_no_column_presents_a_shortage_as_lost_sales(inv):
@@ -52,29 +53,12 @@ def test_no_column_presents_a_shortage_as_lost_sales(inv):
     assert "unfulfilled_units_sim" in inv.columns
 
 
-def test_inventory_equation_closes_exactly(inv):
-    residual = (inv["opening_stock"] + inv["receipts"]
-                - inv["fulfilled_units_sim"] - inv["closing_stock"]).abs()
-    assert residual.max() < 1e-3, f"max residual {residual.max()}"
-
-
-def test_available_is_opening_plus_receipts(inv):
-    assert ((inv["opening_stock"] + inv["receipts"] - inv["available"]).abs() < 1e-3).all()
-
-
-def test_opening_carries_the_previous_closing(inv):
-    carried = inv.groupby(["store_nbr", "family"], observed=True)["closing_stock"].shift(1)
-    delta = (carried - inv["opening_stock"]).abs().dropna()
-    assert delta.max() < 1e-3
-
-
-def test_stock_is_never_negative_and_shortage_is_never_hidden(inv):
-    assert (inv["closing_stock"] >= 0).all()
-    assert (inv["unfulfilled_units_sim"] >= 0).all()
-    expected_fulfilled = inv[["observed_units", "available"]].min(axis=1)
-    assert ((inv["fulfilled_units_sim"] - expected_fulfilled).abs() < 1e-3).all()
-    gap = (inv["observed_units"] - inv["fulfilled_units_sim"] - inv["unfulfilled_units_sim"]).abs()
-    assert gap.max() < 1e-3
+def test_inventory_lineage_passes_the_shared_audit(inv):
+    """The reconciliation itself lives in etl/audit.py and is called by phase 8 before it
+    writes. This test runs the SAME implementation against the persisted file, so the two
+    can never drift apart. That the audit is not vacuous is proved separately, in
+    tests/test_pipeline_audits.py, by feeding it deliberately broken frames."""
+    audit.assert_inventory_lineage(inv)
 
 
 def test_flags_match_the_quantities(inv):

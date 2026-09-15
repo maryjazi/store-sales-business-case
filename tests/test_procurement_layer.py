@@ -12,6 +12,8 @@ import os
 import pandas as pd
 import pytest
 
+import schema
+
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
 FACT = os.path.join(PROCESSED, "fact_purchase_order_sim.parquet")
@@ -25,12 +27,7 @@ pytestmark = pytest.mark.skipif(
 
 # P-07: the whole table is simulated; only these two columns are real join keys.
 REAL_JOIN_KEYS = {"store_nbr", "family"}
-EXPECTED_COLUMNS = {
-    "po_id", "order_date", "requested_delivery_date", "receipt_date", "store_nbr", "family",
-    "supplier_id", "planned_lead_time_days", "actual_lead_time_days", "ordered_qty",
-    "received_qty", "standard_cost", "po_unit_price", "po_value", "received_value",
-    "ppv_per_unit", "ppv_total", "on_time_flag", "in_full_flag",
-}
+TABLE = "fact_purchase_order_sim.parquet"
 
 # Declared scenario bounds from docs/20_Procurement_Simulation.md §5.
 SCENARIO_OTD_BOUNDS = (0.80, 0.92)
@@ -43,7 +40,8 @@ def po():
 
 
 def test_schema_is_pinned(po):
-    assert set(po.columns) == EXPECTED_COLUMNS
+    """The column contract lives in etl/schema.py, not in a second copy here."""
+    assert schema.validate(po, TABLE) == []
     assert REAL_JOIN_KEYS <= set(po.columns)
 
 

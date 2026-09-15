@@ -44,10 +44,12 @@ in-full stay in the procurement layer (phase 7). The two must never be read as o
   kpi_inventory_store_sim.csv - merchandising KPIs per store
 """
 import os
-import shutil
 
 import numpy as np
 import pandas as pd
+
+import audit
+import schema
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
@@ -124,18 +126,6 @@ def main():
     df["available"] = df["opening_stock"] + df["receipts"]
     df["unfulfilled_units_sim"] = (df["units"] - df["fulfilled_units_sim"]).clip(lower=0)
 
-    # ---- audit: the equation must close exactly, with no plug ----
-    residual = (df["available"] - df["fulfilled_units_sim"] - df["closing_stock"]).abs()
-    if residual.max() > 1e-9:
-        raise SystemExit("inventory equation does not reconcile: max residual %.3e" % residual.max())
-    carry_break = (df.groupby(GROUP, observed=True)["closing_stock"].shift(1)
-                   - df["opening_stock"]).abs()
-    if carry_break.max(skipna=True) > 1e-9:
-        raise SystemExit("opening stock does not carry the previous closing stock")
-    if (df["closing_stock"] < 0).any():
-        raise SystemExit("negative closing stock")
-    print("lineage reconciles exactly: closing = opening + receipts - fulfilled, "
-          "opening_t+1 = closing_t, no negative stock")
 
     df["inventory_value_at_cost_sim"] = df["closing_stock"] * df["unit_cost_sim"]
     df["fulfilled_revenue_sim"] = df["fulfilled_units_sim"] * df["net_price_sim"]
@@ -168,6 +158,11 @@ def main():
 
     span_days = (fact["date"].max() - fact["date"].min()).days
     years, weeks = span_days / 365.25, span_days / 7.0
+
+    # ---- audit: one shared implementation, also used by the test suite ----
+    audit.assert_inventory_lineage(fact)
+    print("lineage reconciles: closing = opening + receipts - fulfilled, "
+          "opening_t+1 = closing_t, no negative stock (etl/audit.py)")
 
     def kpis(keys):
         """Merchandising KPIs. Average inventory is the DAILY TOTAL stock averaged over days -
@@ -207,12 +202,9 @@ def main():
     kpi_family = kpis(["family"])
     kpi_store = kpis(["store_nbr"])
 
-    fact.to_parquet(f"{LOCAL}/fact_inventory_sim.parquet", index=False)
-    kpi_family.to_csv(f"{LOCAL}/kpi_inventory_sim.csv", index=False)
-    kpi_store.to_csv(f"{LOCAL}/kpi_inventory_store_sim.csv", index=False)
-    for name in ("fact_inventory_sim.parquet", "kpi_inventory_sim.csv",
-                 "kpi_inventory_store_sim.csv"):
-        shutil.copyfile(f"{LOCAL}/{name}", os.path.join(PROCESSED, name))
+    schema.write_table(fact, "fact_inventory_sim.parquet", PROCESSED, LOCAL)
+    schema.write_table(kpi_family, "kpi_inventory_sim.csv", PROCESSED, LOCAL)
+    schema.write_table(kpi_store, "kpi_inventory_store_sim.csv", PROCESSED, LOCAL)
 
     tot_obs = fact["observed_units"].sum()
     tot_ful = fact["fulfilled_units_sim"].sum()
