@@ -158,6 +158,11 @@ def main():
     for col in fact.columns:
         if fact[col].dtype == "float64" and col not in lineage:
             fact[col] = fact[col].astype("float32")
+    for col in lineage:
+        # observed_units arrives as float32 from the sales fact; the audit columns must all be
+        # float64 on disk, otherwise a float32 x float32 product downstream silently loses the
+        # precision the reconciliation depends on
+        fact[col] = fact[col].astype("float64")
     fact["store_nbr"] = fact["store_nbr"].astype("int16")
     fact["family"] = fact["family"].astype("category")
 
