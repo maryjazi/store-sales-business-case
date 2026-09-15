@@ -38,7 +38,7 @@ Week 6   ████ Phase 7 (docs pack, tests, CI, dashboard screenshots)
 
 | Item | Priority | Status | Owner |
 |---|---|---|---|
-| Power BI dashboard build (all 5 pages) | P1 | 🟡 In progress | Analyst |
+| Power BI dashboard rebuild — 4 pages were built in a Power BI Desktop session that was never saved (window title `Untitled`); no `.pbix` exists in the repo | P1 | 🟡 Open | Analyst |
 | Dashboard screenshots (External Factors, Forecast) | P2 | 🟡 Pending | Analyst |
 | Full-data model retrain (2.97M rows) | P2 | ☐ Not started | Analyst |
 | GitHub repo publish + portfolio links | P2 | ☐ Pending | Analyst |
@@ -86,7 +86,7 @@ Week 6   ████ Phase 7 (docs pack, tests, CI, dashboard screenshots)
 | M1 — Data ready | merged + cleaned parquet validated | Week 2 | ✅ |
 | M2 — Insights delivered | EDA + KPI report approved | Week 3 | ✅ |
 | M3 — Model validated | RMSLE < 0.50 on Kaggle | Week 4 | ✅ (0.48464) |
-| M4 — Dashboard live | 5 pages + 4 screenshots | Week 6 | 🟡 2/4 screenshots (Power BI); Streamlit alternative fully working |
+| M4 — Dashboard live | 4 pages + 4 screenshots | Week 6 | 🟡 `.pbix` not saved; 2/4 screenshots exist; Streamlit alternative fully working |
 | M5 — Portfolio complete | GitHub + README + business case | Week 6 | 🟡 Links pending |
 
 ---

@@ -9,7 +9,7 @@
 | ID | Assumption | Impact if wrong |
 |---|---|---|
 | A-01 | Kaggle dataset accurately represents Corporación Favorita operations | Findings may not transfer to live business |
-| A-02 | Sales values in USD are consistent across the period | Currency/inflation effects not modeled |
+| A-02 | `sales` is a unit quantity; the dataset contains no price or cost data | Revenue, margin and price analyses are out of scope for this data alone |
 | A-03 | `onpromotion` count is known at forecast time for test.csv | If promo plans change last-minute, forecast degrades |
 | A-04 | Store open date ≈ first day with sales > 0 | Stores with pre-opening inventory not captured |
 | A-05 | National holidays affect all stores equally | Regional/local holidays ignored in v1 |

@@ -9,7 +9,7 @@
 | Field | Value |
 |---|---|
 | **Actor** | Retail Operations Director |
-| **Goal** | Understand whether the chain is growing and where revenue is concentrated |
+| **Goal** | Understand whether the chain is growing and where volume is concentrated |
 | **Preconditions** | KPI pipeline has run; dashboard is published |
 | **Trigger** | Monthly business review meeting |
 
@@ -17,7 +17,7 @@
 
 1. Director opens Power BI Overview page
 2. Reviews KPI cards: Total Sales, Avg Daily Sales, YoY Growth
-3. Drills into category treemap — confirms top 3 = 64% of revenue
+3. Drills into category treemap — confirms top 3 = 64% of unit sales
 4. Filters by year to compare 2015 vs 2016 growth (+15% → +19.8%)
 5. Notes decelerating growth trend for forward planning
 

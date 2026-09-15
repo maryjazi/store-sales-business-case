@@ -73,7 +73,7 @@
 | Rule ID | Rule | Rationale | Implementation |
 |---|---|---|---|
 | BR-R01 | Executive KPIs rounded to **1 decimal** for percentages | Readability | kpi_report |
-| BR-R02 | Currency in **USD** (dataset convention) | Consistent with Kaggle | All reports |
+| BR-R02 | All sales figures are **unit quantities**, not currency (the dataset has no price column) | Prevents unsupported revenue claims | All reports |
 | BR-R03 | Dashboard uses **star schema** (not flat table) | BI best practice | phase5 |
 | BR-R04 | Actual and forecast share **same dimensions** | Consistent drill-down | phase5 |
 | BR-R05 | Store performance conversations must consider **store tenure** | Fair comparison | business case §8 |

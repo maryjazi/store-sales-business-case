@@ -8,6 +8,6 @@ Weekend vs Weekday Sales Uplift %,39.3
 National Holiday Sales Uplift %,19.0
 Payday Sales Uplift %,1.4
 Oil Price vs Monthly Sales Correlation,-0.75
-"Avg Sales per Transaction (ticket proxy, USD)",7.46
+Avg Units per Transaction (basket proxy),7.46
 % Rows with Zero Sales,31.3
 % Rows with Missing Transaction Data,8.2

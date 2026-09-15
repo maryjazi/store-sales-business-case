@@ -52,9 +52,9 @@
 
 | Term | Definition |
 |---|---|
-| **Total sales** | Sum of `sales` across all rows in the analysis window ($1.07B) |
-| **Avg daily sales** | Total sales ÷ distinct days ($637.6K) |
-| **Sales per transaction** | Ticket-size proxy: daily store sales ÷ transaction count |
+| **Total unit sales** | Sum of `sales` (a quantity, not currency) across all rows in the analysis window (1.07B units) |
+| **Avg daily unit sales** | Total unit sales ÷ distinct days (637.6K units) |
+| **Units per transaction** | Basket-size proxy: daily store unit sales ÷ transaction count |
 | **Zero-sales row** | Row where `sales = 0` (31.3% of rows — stock-out or no-demand signal) |
 | **Category share** | Family's total sales as percentage of chain total |
 | **Store sales rank** | Rank by total sales; should be adjusted for `days_since_store_open` |

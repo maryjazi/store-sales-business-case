@@ -120,7 +120,7 @@ best_baseline = model_df[model_df["model"] != "LightGBM (engineered features)"][
 improvement_pct = (best_baseline - best_rmsle) / best_baseline * 100
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Gesamtumsatz (2013–2017)", f"${total_sales / 1e9:.2f} Mrd")
+c1.metric("Absatzmenge gesamt (2013–2017)", f"{total_sales / 1e9:.2f} Mrd Einheiten")
 c2.metric("Bestes Modell: LightGBM", f"RMSLE {best_rmsle:.3f}", f"-{improvement_pct:.1f}% vs. beste Baseline")
 c3.metric("Wochenend-Uplift", f"+{weekend_uplift:.1f}%")
 c4.metric("Feiertags-Uplift", f"+{holiday_uplift:.1f}%")
@@ -131,17 +131,17 @@ st.divider()
 row1_left, row1_right = st.columns(2)
 
 with row1_left:
-    st.subheader("Umsatztrend (monatlich)")
+    st.subheader("Absatztrend (monatlich)")
     monthly = load_monthly()
     fig = go.Figure()
     fig.add_trace(go.Scatter(
         x=monthly["date"], y=monthly["total_sales"],
         mode="lines", line=dict(color=BLUE, width=2),
         fill="tozeroy", fillcolor="rgba(42,120,214,0.08)",
-        hovertemplate="%{x|%b %Y}<br>$%{y:,.0f}<extra></extra>",
+        hovertemplate="%{x|%b %Y}<br>%{y:,.0f} Einheiten<extra></extra>",
     ))
     fig.update_layout(**PLOTLY_LAYOUT, height=320, showlegend=False)
-    fig.update_yaxes(title=None, tickformat="$.2s")
+    fig.update_yaxes(title=None, tickformat=".2s")
     st.plotly_chart(fig, width='stretch')
 
 with row1_right:
@@ -171,11 +171,11 @@ with row2_left:
                               name="Prognose (LightGBM)", line=dict(color=ORANGE, width=2, dash="dash")))
     fig.update_layout(**PLOTLY_LAYOUT, height=320,
                        legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0))
-    fig.update_yaxes(title=None, tickformat="$.2s")
+    fig.update_yaxes(title=None, tickformat=".2s")
     st.plotly_chart(fig, width='stretch')
 
 with row2_right:
-    st.subheader("Filialen-Ranking (Top 10 nach Umsatz)")
+    st.subheader("Filialen-Ranking (Top 10 nach Absatzmenge)")
     stores = load_store_kpi()
     store_types = ["Alle"] + sorted(stores["type"].dropna().unique().tolist())
     selected_type = st.selectbox("Filialtyp", store_types, key="store_type_filter")
@@ -184,19 +184,19 @@ with row2_right:
     top10_labels = top10["store_nbr"].astype(str) + " · " + top10["city"]
     fig = go.Figure(go.Bar(
         x=top10["total_sales"], y=top10_labels, orientation="h",
-        marker_color=BLUE, text=[f"${v/1e6:.1f}M" for v in top10["total_sales"]],
+        marker_color=BLUE, text=[f"{v/1e6:.1f} Mio." for v in top10["total_sales"]],
         textposition="outside",
-        hovertemplate="Filiale %{y}<br>$%{x:,.0f}<extra></extra>",
+        hovertemplate="Filiale %{y}<br>%{x:,.0f} Einheiten<extra></extra>",
     ))
     fig.update_layout(**PLOTLY_LAYOUT, height=320, showlegend=False)
-    fig.update_xaxes(title=None, tickformat="$.2s")
+    fig.update_xaxes(title=None, tickformat=".2s")
     fig.update_yaxes(title=None)
     st.plotly_chart(fig, width='stretch')
 
 st.divider()
 
 # --------------------------------------------------------- category share --
-st.subheader("Umsatzanteil nach Produktkategorie")
+st.subheader("Absatzanteil nach Produktkategorie")
 cat = load_category_kpi()
 top_n = 8
 top_cats = cat.head(top_n).copy()
@@ -214,7 +214,7 @@ fig = go.Figure(go.Bar(
     hovertemplate="%{y}: %{x:.1f}%<extra></extra>",
 ))
 fig.update_layout(**PLOTLY_LAYOUT, height=340, showlegend=False)
-fig.update_xaxes(title="Anteil am Gesamtumsatz (%)", range=[0, top_cats["share_pct"].max() * 1.2])
+fig.update_xaxes(title="Anteil an der Gesamtabsatzmenge (%)", range=[0, top_cats["share_pct"].max() * 1.2])
 fig.update_yaxes(title=None)
 st.plotly_chart(fig, width='stretch')
 

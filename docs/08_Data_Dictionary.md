@@ -15,7 +15,7 @@
 | date | date | Sales date | 2013-01-01 | |
 | store_nbr | integer | Store number | 1 | FK → stores |
 | family | string | Product category (33 values) | AUTOMOTIVE | |
-| sales | float | Unit sales revenue | 0.0 – 124,717 | |
+| sales | float | Unit sales — a quantity, not currency (fractional for weighed goods; the dataset has no price column) | 0.0 – 124,717 | |
 | onpromotion | integer | Items on promotion | 0 – 741 | |
 
 **Grain:** one row per store × family × day  

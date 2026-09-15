@@ -54,7 +54,7 @@ headline = {
     "National Holiday Sales Uplift %": round(eda["holiday_uplift_pct"], 1),
     "Payday Sales Uplift %": round(eda["payday_uplift_pct"], 1),
     "Oil Price vs Monthly Sales Correlation": round(eda["oil_sales_correlation"], 2),
-    "Avg Sales per Transaction (ticket proxy, USD)": round(float(sales_per_transaction), 2),
+    "Avg Units per Transaction (basket proxy)": round(float(sales_per_transaction), 2),
     "% Rows with Zero Sales": round(float(pct_zero_sales), 1),
     "% Rows with Missing Transaction Data": round(float(pct_transactions_missing), 1),
 }

@@ -99,9 +99,9 @@ store-sales-time-series-forecasting/
 | 2 | Exploratory analysis (sales analytics) | ✅ |
 | 3 | KPI definition & reporting | ✅ |
 | 4 | Forecasting model | ✅ |
-| 5 | Power BI dashboard | 🟡 (data + guide ready, build it in Power BI Desktop) |
+| 5 | Power BI dashboard | 🟡 (star-schema data + design doc ready; the `.pbix` was never saved — see docs/18) |
 | 6 | Business case write-up | ✅ |
-| 7 | Portfolio packaging | 🟡 (README/LICENSE/summary done; dashboard screenshots pending) |
+| 7 | Portfolio packaging | 🟡 (README/LICENSE/summary done; GitHub publish + 2 of 4 dashboard screenshots pending) |
 
 *(Status will be updated as each phase is completed.)*
 
@@ -114,6 +114,7 @@ store-sales-time-series-forecasting/
 - **holidays_events.csv**: 350 records; contains duplicate entries per date (a holiday + its "transferred" counterpart) — deduplicated by date before merging to avoid inflating row counts.
 - **transactions.csv**: store-day transaction counts; ~245.8k rows in the merged dataset have no matching transaction record (dates/stores not covered in this file) — to be handled in Phase 1.
 - Merged working dataset: `data/processed/merged_train.parquet` (3,000,888 rows × 15 columns).
+- **Unit semantics**: `sales` is a **quantity, not a currency amount** — 15.4% of its values are fractional (weighed goods such as BREAD/BAKERY, DELI, FROZEN FOODS), and the dataset ships no price column. Every sales figure in this repo is therefore **unit sales**; no revenue, margin or price KPI is derived from this data alone.
 
 ## Data Notes (from Phase 1)
 
@@ -139,7 +140,7 @@ store-sales-time-series-forecasting/
 
 - Full KPI report: `reports/kpi_report.md` (headline KPIs, store ranking, category performance, monthly trend).
 - Machine-readable tables for reuse (Power BI, business case): `reports/kpi_summary.csv`, `data/processed/kpi_store.csv`, `kpi_category.csv`, `kpi_monthly.csv`.
-- Total sales across the training window: **$1.07B**. Store ranking is led entirely by Quito locations; the lowest-ranked store (52) is partly a lifecycle artifact (opened partway through the data window), not pure underperformance.
+- Total unit sales across the training window: **1.07B units**. Store ranking is led entirely by Quito locations; the lowest-ranked store (52) is partly a lifecycle artifact (opened partway through the data window), not pure underperformance.
 
 ## Data Notes (from Phase 4 — Forecasting)
 
@@ -160,7 +161,7 @@ store-sales-time-series-forecasting/
 
 ## Key Results
 
-- **Total sales analyzed**: $1.07B across 54 stores, 33 categories, 2013–2017.
+- **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
 - **Best forecasting model**: LightGBM, RMSLE 0.465 (vs 0.522 best baseline).
 - **Biggest sales drivers**: store location/type, product category, promotions, and store lifecycle stage.
 - **External factors**: national holidays +19% sales, weekends +39%, oil price strongly (negatively) correlated with monthly sales trend.

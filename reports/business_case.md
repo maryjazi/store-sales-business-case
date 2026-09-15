@@ -8,9 +8,9 @@
 
 ## 1. Executive Summary
 
-This project analyzes 4.7 years of daily sales across 54 stores and 33 product categories ($1.07B in total recorded sales) to answer three business questions: what drives sales, how predictable is demand, and what should the business do differently.
+This project analyzes 4.7 years of daily sales across 54 stores and 33 product categories (1.07B units of recorded sales) to answer three business questions: what drives sales, how predictable is demand, and what should the business do differently.
 
-Three findings stand out. First, growth has been strong but decelerating — sales roughly doubled from 2013 to 2016, but year-over-year growth slowed from +49% (2013→2014) to +15–20% in subsequent years, suggesting the business is maturing past its early expansion phase. Second, sales are highly concentrated: three categories (Grocery I, Beverages, Produce) generate 64% of all revenue, and the top 5 of 54 stores — all in Quito — outsell the bottom 5 by roughly 8x. Third, a machine-learning forecasting model beats naive planning methods by a meaningful margin (11% lower error than the best simple baseline), which translates directly into better inventory and staffing decisions.
+Three findings stand out. First, growth has been strong but decelerating — sales roughly doubled from 2013 to 2016, but year-over-year growth slowed from +49% (2013→2014) to +15–20% in subsequent years, suggesting the business is maturing past its early expansion phase. Second, sales are highly concentrated: three categories (Grocery I, Beverages, Produce) generate 64% of all unit sales, and the top 5 of 54 stores — all in Quito — outsell the bottom 5 by roughly 8x. Third, a machine-learning forecasting model beats naive planning methods by a meaningful margin (11% lower error than the best simple baseline), which translates directly into better inventory and staffing decisions.
 
 The recommendations in Section 8 focus on three levers: protecting and growing the concentrated core categories, addressing underperformance at specific stores (correcting for store-lifecycle effects rather than misreading them as failure), and formalizing a demand-forecasting process using the model built here.
 
@@ -44,9 +44,9 @@ This project builds the analytical foundation to manage that uncertainty: a clea
 
 **Growth is real but slowing.** Total sales grew ~49% in 2014, then ~15% and ~20% in the following two years — still healthy, but a different growth profile than the business's early years, relevant for setting realistic forward targets.
 
-**Revenue is concentrated in a few categories.** Grocery I (32% of total sales), Beverages (20%), and Produce (11%) together account for 64% of revenue. This is a normal pattern for a grocery-format retailer, but it also means supply disruptions or stockouts in these three categories have an outsized impact on total revenue.
+**Volume is concentrated in a few categories.** Grocery I (32% of total unit sales), Beverages (20%), and Produce (11%) together account for 64% of unit sales. This is a normal pattern for a grocery-format retailer, but it also means supply disruptions or stockouts in these three categories have an outsized impact on total volume.
 
-**Store performance varies by nearly 10x, but "worst" isn't always "worst."** The top 5 stores (all in Quito) each generate $43–62M over the period; the bottom 5 generate $2.7–7.7M. The lowest-ranked store (52, Manta) is a partial exception — it opened partway through the data window, so its low *total* is partly a tenure artifact rather than pure underperformance. Store rankings used for performance management should control for this.
+**Store performance varies by nearly 10x, but "worst" isn't always "worst."** The top 5 stores (all in Quito) each generate 43–62M units over the period; the bottom 5 generate 2.7–7.7M units. The lowest-ranked store (52, Manta) is a partial exception — it opened partway through the data window, so its low *total* is partly a tenure artifact rather than pure underperformance. Store rankings used for performance management should control for this.
 
 **Calendar effects are large and actionable.** Weekend sales run 39% above weekday sales on average; national holidays add a further 19% uplift. Payday (the 15th and month-end, when Ecuador's public sector disburses wages) shows only a modest 1.4% uplift at the whole-basket level — smaller than expected, and worth re-testing at the category level in future work, since payday effects are more likely concentrated in specific categories than spread evenly.
 
@@ -60,18 +60,18 @@ The following KPIs (full detail in `reports/kpi_report.md` and `data/processed/k
 
 | KPI | Value (period) | Business Use |
 |---|---|---|
-| Total Sales | $1.07B | Headline revenue tracking |
-| Avg Daily Sales | $637.6K | Daily operating baseline |
+| Total Unit Sales | 1.07B units | Headline volume tracking |
+| Avg Daily Unit Sales | 637.6K units | Daily operating baseline |
 | YoY Growth | +49.2% / +15.0% / +19.8% (2014/2015/2016) | Growth trend, target-setting |
 | Weekend Uplift | +39.3% | Staffing/inventory planning |
 | Holiday Uplift | +19.0% | Promotional & staffing calendar |
-| Avg Sales per Transaction | $7.46 | Basket-size proxy, pricing/upsell signal |
+| Avg Units per Transaction | 7.46 units | Basket-size proxy |
 | % Zero-Sales Rows | 31.3% | Stock availability / demand-coverage signal |
 | Store Sales Rank | See `kpi_store.csv` | Performance management (adjust for store tenure) |
 
 ## 7. Forecasting Model & Results
 
-Four approaches were compared on the held-out 16-day validation window, scored with RMSLE (the metric this Kaggle competition itself uses — it penalizes relative, not absolute, error, which suits a business with both $10 and $10,000/day product lines):
+Four approaches were compared on the held-out 16-day validation window, scored with RMSLE (the metric this Kaggle competition itself uses — it penalizes relative, not absolute, error, which suits a business with both low-volume and high-volume product lines):
 
 | Model | RMSLE (lower = better) |
 |---|---|
@@ -88,7 +88,7 @@ The trained model was used to generate a 16-day forward forecast for the actual 
 
 ## 8. Business Recommendations
 
-**Protect the core, but watch concentration risk.** With 64% of revenue in three categories, even short supply disruptions there have an outsized revenue impact. Recommend a tighter stock-availability SLA specifically for Grocery I, Beverages, and Produce, monitored via the "% Zero-Sales Rows" KPI at the category level.
+**Protect the core, but watch concentration risk.** With 64% of unit sales in three categories, even short supply disruptions there have an outsized volume impact. Recommend a tighter stock-availability SLA specifically for Grocery I, Beverages, and Produce, monitored via the "% Zero-Sales Rows" KPI at the category level.
 
 **Re-baseline store performance for tenure.** Before using total-sales rankings for store-level performance conversations, adjust for `days_since_store_open` — comparing a store open 8 months to one open 4 years on raw totals will misattribute a ramp-up curve as underperformance.
 

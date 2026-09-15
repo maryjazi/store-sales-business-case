@@ -33,7 +33,7 @@ This document captures the business requirements for the Store Sales Analytics &
 | BR-03 | System shall measure weekend vs weekday sales uplift | Uplift ≈ +39% documented |
 | BR-04 | System shall measure national holiday sales uplift | Uplift ≈ +19% documented |
 | BR-05 | System shall rank stores by total and average sales | Ranking exported to `kpi_store.csv` |
-| BR-06 | System shall rank categories by revenue share | Top 3 = 64% of total sales |
+| BR-06 | System shall rank categories by volume share | Top 3 = 64% of total unit sales |
 
 ### 3.2 Forecasting
 

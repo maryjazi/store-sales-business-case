@@ -10,10 +10,12 @@
 
 ### 1.1 Headline KPIs (executive)
 
+> **Unit semantics:** `sales` is a quantity, not a currency amount (15.4% of values are fractional — weighed goods; the dataset has no price column). All volume KPIs below are therefore expressed in **units**. Revenue, margin and price KPIs cannot be derived from this data and are not claimed.
+
 | KPI ID | Name | Formula / logic | Value | Owner | Frequency |
 |---|---|---|---|---|---|
-| KPI-01 | Total Sales | `SUM(sales)` | $1.07B | Finance / Ops | Monthly |
-| KPI-02 | Avg Daily Sales | `SUM(sales) / COUNT(DISTINCT date)` | $637.6K | Ops | Daily / Monthly |
+| KPI-01 | Total Unit Sales | `SUM(sales)` | 1.07B units | Finance / Ops | Monthly |
+| KPI-02 | Avg Daily Unit Sales | `SUM(sales) / COUNT(DISTINCT date)` | 637.6K units | Ops | Daily / Monthly |
 | KPI-03 | YoY Growth 2013→2014 | `(sales_2014 / sales_2013) - 1` | +49.2% | Finance | Annual |
 | KPI-04 | YoY Growth 2014→2015 | Same pattern | +15.0% | Finance | Annual |
 | KPI-05 | YoY Growth 2015→2016 | Same pattern | +19.8% | Finance | Annual |
@@ -21,7 +23,7 @@
 | KPI-07 | Holiday Uplift | `AVG(sales \| is_holiday) / AVG(sales \| regular) - 1` | +19.0% | Merchandising | Monthly |
 | KPI-08 | Payday Uplift | `AVG(sales \| is_payday) / AVG(sales \| regular) - 1` | +1.4% | Merchandising | Monthly |
 | KPI-09 | Oil ↔ Sales Correlation | Pearson(monthly_sales, avg_oil_price) | −0.75 | Finance | Quarterly |
-| KPI-10 | Avg Sales per Transaction | `SUM(sales) / SUM(transactions)` on store-days with tx > 0 | $7.46 | Merchandising | Monthly |
+| KPI-10 | Avg Units per Transaction | `SUM(sales) / SUM(transactions)` on store-days with tx > 0 | 7.46 units | Merchandising | Monthly |
 | KPI-11 | % Zero-Sales Rows | `COUNT(sales=0) / COUNT(*)` | 31.3% | Supply Chain | Monthly |
 | KPI-12 | Forecast RMSLE | RMSLE on 16-day hold-out | 0.465 | Supply Chain | Per model run |
 
@@ -41,7 +43,7 @@
 | KPI ID | Name | Formula | Output file |
 |---|---|---|---|
 | KPI-C01 | Category Total Sales | `SUM(sales) GROUP BY family` | `kpi_category.csv` |
-| KPI-C02 | Category Revenue Share | Category total / chain total × 100 | `kpi_category.csv` |
+| KPI-C02 | Category Volume Share | Category total / chain total × 100 | `kpi_category.csv` |
 | KPI-C03 | Category Rank | Rank by total sales descending | `kpi_category.csv` |
 | KPI-C04 | Promo Uplift (correlational) | Avg sales when `onpromotion > 0` vs `= 0` | `kpi_category.csv` |
 
@@ -71,12 +73,12 @@
 ## 3. Power BI DAX measures (dashboard KPIs)
 
 ```dax
-Total Sales = SUM(fact_sales_actual[sales])
+Total Unit Sales = SUM(fact_sales_actual[sales])
 Total Forecast Sales = SUM(fact_sales_forecast[forecast_sales])
-Avg Daily Sales = DIVIDE([Total Sales], DISTINCTCOUNT(fact_sales_actual[date]))
+Avg Daily Unit Sales = DIVIDE([Total Unit Sales], DISTINCTCOUNT(fact_sales_actual[date]))
 Holiday Uplift % = /* not yet defined */
 Payday Uplift % = /* not yet defined */
-Sales Rank by Store = RANKX(ALL(dim_store[store_nbr]), [Total Sales], , DESC)
+Sales Rank by Store = RANKX(ALL(dim_store[store_nbr]), [Total Unit Sales], , DESC)
 ```
 
 ---
