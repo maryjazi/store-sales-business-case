@@ -36,6 +36,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 | 21 | [Inventory Simulation](21_Inventory_Simulation.md) | Inventory derived from receipts: equation, audit, merchandising KPIs |
 | 22 | [Pricing & Profitability](22_Pricing_Profitability.md) | Revenue basis reconciliation, margin, markdown, margin bridge |
 | 23 | [Price Sensitivity & Break-even](23_Price_Sensitivity_Design.md) | Break-even arithmetic, scenario assumptions, and why no elasticity is estimated |
+| 24 | [Promotion Effectiveness](24_Promotion_Effectiveness_Design.md) | Observational uplift, placebo test, promo economics, identification limits |
 
 ## Technical reference (legacy / quick links)
 
@@ -53,5 +54,6 @@ Project documentation for Store Sales Analytics & Forecasting.
 | KPI Report | [reports/kpi_report.md](../reports/kpi_report.md) |
 | Pricing & Profitability (simulated) | [reports/pricing_profitability_sim.md](../reports/pricing_profitability_sim.md) |
 | Price Sensitivity (simulated) | [reports/price_sensitivity_sim.md](../reports/price_sensitivity_sim.md) |
+| Promotion Effectiveness | [reports/promotion_effectiveness.md](../reports/promotion_effectiveness.md) |
 | SQL Scripts | [sql/](../sql/) |
 | Portfolio Summary | [PORTFOLIO_SUMMARY.md](../PORTFOLIO_SUMMARY.md) |

@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (23-document BA/DS pack)
-│   ├── README.md               # docs index → 01–23
-│   ├── 01_Project_Charter.md … 23_Price_Sensitivity_Design.md
+├── docs/                       # project documentation (24-document BA/DS pack)
+│   ├── README.md               # docs index → 01–24
+│   ├── 01_Project_Charter.md … 24_Promotion_Effectiveness_Design.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -61,7 +61,8 @@ store-sales-time-series-forecasting/
 │   ├── phase7_procurement.py        # simulated suppliers, purchase orders, receipts
 │   ├── phase8_inventory.py          # inventory derived from the receipt flow
 │   ├── phase9_pricing.py            # pricing, margin, markdown, margin bridge
-│   └── phase10_price_sensitivity.py # break-even and price-scenario analysis
+│   ├── phase10_price_sensitivity.py # break-even and price-scenario analysis
+│   └── phase11_promotion.py         # observational uplift, placebo test, promo economics
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -128,7 +129,7 @@ competition data does not contain (price, cost, inventory, suppliers) — see
 | B4 | Inventory & merchandising (sell-through, turnover, WoS, GMROI, OOS) | `phase8_inventory.py` | ✅ |
 | B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ✅ |
 | B3 | Break-even & price sensitivity | `phase10_price_sensitivity.py` | ✅ |
-| B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ☐ |
+| B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ✅ |
 | B7 | Scenario analysis | `phase12_scenario.py` | ☐ |
 | B8 | Commercial cockpit (Executive / Pricing / Procurement / Retail) | `phase13_commercial_export.py` | ☐ |
 
@@ -238,6 +239,17 @@ because procurement has to exist before inventory can be derived from it.
 - The price/volume regression is kept only as a **methodological guardrail**: fitted slopes run from **+8.6 to −8.5**, which is the demonstration. A positive "elasticity" is not a weak result, it is a meaningless one — the slope measures promotion intensity, a shared cause of both the discount and the volume. It lives in a `diagnostic_` file, outside the KPI outputs, and a test keeps it there.
 - Design, formulas and the guardrail: [docs/23_Price_Sensitivity_Design.md](docs/23_Price_Sensitivity_Design.md). Readable summary: [reports/price_sensitivity_sim.md](reports/price_sensitivity_sim.md).
 
+## Data Notes (from Phase 11 — Promotion Effectiveness)
+
+- Three tiers are kept apart **by file name**: `_observational` (real inputs, calendar-matched baseline), `_sim` (anything touching simulated discount depth or margin) and `diagnostic_` (method validity, not findings). A test asserts no observational table carries a simulated column.
+- `onpromotion` was verified against the raw data before anything was built: 362 distinct values, up to 741, median 4 on promoted rows. It counts **promoted items** — promotion *breadth*, not discount depth. Depth is simulated, so the two are never merged into one "intensity" measure.
+- **The headline result is a number getting smaller.** The naive promo comparison in the KPI report gives +619%; against a calendar-matched baseline the chain-level estimate is **+52.3%**. Most of the naive figure was category and calendar composition.
+- **And it is still not causal.** The same estimator on *fake* promotion days — sampled to match the real promotion calendar, baselines rebuilt without them — returns **+10.6%**. That indicates residual calendar/selection structure and limits causal interpretation. It is a method-validity diagnostic, not a lower bound: nothing subtracts one from the other, and a test forbids storing such a difference.
+- Scenario economics compare two scenarios directly (`GM_promotion = Q₁(P_promo − C)` against `GM_baseline = Q₀(P_list − C)`) rather than decomposing by hand, and put the **required** uplift from the break-even formula beside the **estimated** one: 8 of 32 families cleared the requirement. The wording stays *observed uplift exceeded the scenario break-even requirement*, never *the promotion was profitable*.
+- Cross-family displacement is reported as an **identification diagnostic**, not a cannibalisation analysis: other families move **+12.2%** on promotion days (up, not down) against **+4.3%** on placebo days — inconsistent with a simple displacement story, and a sign that promotion days differ systematically from ordinary ones. Which mechanism causes that is not identified here. Conclusion: cannibalisation cannot be reliably identified from this aggregation and design. Naming the limit is the result.
+- Every chain-level figure is a **ratio of sums**, never a mean of per-family ratios — the two differ by more than a percentage point here, and a mean would make the real and placebo numbers incomparable. The totals behind each quoted figure are stored in the output files and a test recomputes them against the report.
+- Design, estimator and limits: [docs/24_Promotion_Effectiveness_Design.md](docs/24_Promotion_Effectiveness_Design.md). Report: [reports/promotion_effectiveness.md](reports/promotion_effectiveness.md).
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -282,6 +294,7 @@ python etl/phase7_procurement.py             # simulated suppliers / POs / recei
 python etl/phase8_inventory.py               # inventory derived from receipts -> KPIs
 python etl/phase9_pricing.py                 # pricing / margin / markdown / margin bridge
 python etl/phase10_price_sensitivity.py      # break-even + price scenarios
+python etl/phase11_promotion.py              # promotion uplift, placebo, economics
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```

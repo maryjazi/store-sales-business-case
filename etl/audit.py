@@ -158,3 +158,43 @@ def assert_break_even_roundtrip(be, rtol=1e-6):
         raise AuditError("rows where margin cannot be restored still carry a break-even ratio")
     if feasible["break_even_volume_ratio_sim"].isna().any():
         raise AuditError("a feasible row has no break-even ratio")
+
+
+def assert_promotion_economics(e, atol=1.0):
+    """Promotion economics are a comparison of two scenarios, not a hand-rolled
+    decomposition:
+
+        GM_promotion = Q1 x (P_promo - C)          (observed units at the promoted price)
+        GM_baseline  = Q0 x (P_list  - C)          (baseline units at list price)
+        incremental  = GM_promotion - GM_baseline
+
+    The identity is reconstructed here so the incremental figure cannot drift away from the
+    two scenarios it is supposed to be the difference of. Markdown investment and ROI are
+    checked against their own definitions for the same reason.
+    """
+    required = ["observed_units_on_promo", "baseline_units_observational", "avg_list_price_sim",
+                "avg_promo_price_sim", "avg_unit_cost_sim", "gm_promotion_scenario_sim",
+                "gm_baseline_scenario_sim", "incremental_gross_margin_sim",
+                "markdown_investment_sim", "promo_roi_sim"]
+    missing = [c for c in required if c not in e.columns]
+    if missing:
+        raise AuditError("promotion economics audit needs columns %s" % missing)
+
+    _fail("GM_promotion = Q1 x (P_promo - C)",
+          e["observed_units_on_promo"] * (e["avg_promo_price_sim"] - e["avg_unit_cost_sim"])
+          - e["gm_promotion_scenario_sim"], atol)
+    _fail("GM_baseline = Q0 x (P_list - C)",
+          e["baseline_units_observational"] * (e["avg_list_price_sim"] - e["avg_unit_cost_sim"])
+          - e["gm_baseline_scenario_sim"], atol)
+    _fail("incremental = GM_promotion - GM_baseline",
+          e["gm_promotion_scenario_sim"] - e["gm_baseline_scenario_sim"]
+          - e["incremental_gross_margin_sim"], atol)
+    _fail("markdown investment = Q1 x (P_list - P_promo)",
+          e["observed_units_on_promo"] * (e["avg_list_price_sim"] - e["avg_promo_price_sim"])
+          - e["markdown_investment_sim"], atol)
+    _fail("ROI = incremental / markdown investment",
+          e["incremental_gross_margin_sim"] / e["markdown_investment_sim"] - e["promo_roi_sim"],
+          1e-6)
+
+    if any("causal" in c.lower() for c in e.columns):
+        raise AuditError("a promotion column claims causality; this design cannot support it")

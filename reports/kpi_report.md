@@ -59,7 +59,9 @@ Top promo-uplift categories (avg sales on promoted rows vs non-promoted rows):
 | Home and Kitchen II | +301% |
 | Produce | +208% |
 
-**Caveat:** these are large because the categories have very low non-promo baselines (e.g. school supplies barely sell outside back-to-school promo periods) — read as "promotions matter a lot for these categories," not as a literal always-on multiplier. A controlled/causal estimate needs a matched-baseline design and is tracked as a separate promotion-effectiveness analysis — it is not covered by the forecasting phase.
+**Caveat:** these are large because the categories have very low non-promo baselines (e.g. school supplies barely sell outside back-to-school promo periods) — read as "promotions matter a lot for these categories," not as a literal always-on multiplier.
+
+**Followed up in B5.** `etl/phase11_promotion.py` replaces this naive comparison with a calendar-matched baseline, which brings the chain-level figure from **+619%** down to **+52.3%** — most of the naive number was category and calendar composition, not promotion. That estimate is still **not causal**: a placebo test on fake promotion days returns **+10.6%**, indicating residual calendar/selection structure. See [reports/promotion_effectiveness.md](promotion_effectiveness.md) and [docs/24](../docs/24_Promotion_Effectiveness_Design.md).
 
 ## 4. Monthly Trend
 

@@ -86,6 +86,17 @@
 | `kpi_price_scenario_sim` | Price grid × explicit elasticity assumptions → revenue and margin change | CSV |
 | `diagnostic_price_volume_regression_sim` | **Not a KPI.** Methodological guardrail showing why a regression on simulated prices is not elasticity evidence | CSV |
 
+## Promotion layer (`data/processed/`, phase 11 — three tiers)
+
+| Table | Tier | Format |
+|---|---|---|
+| `kpi_promotion_uplift_observational` | Observational estimate: real inputs, calendar-matched baseline | CSV |
+| `kpi_promotion_breadth_response_observational` | Observational estimate by promotion breadth decile | CSV |
+| `diagnostic_promotion_falsification` | **Not a KPI.** Placebo and displacement diagnostics | CSV |
+| `kpi_promotion_economics_sim` | Scenario economics: depends on simulated discount depth | CSV |
+
+Design and limits: [24_Promotion_Effectiveness_Design.md](24_Promotion_Effectiveness_Design.md).
+
 Design and limits: [23_Price_Sensitivity_Design.md](23_Price_Sensitivity_Design.md).
 
 Revenue basis and definitions: [22_Pricing_Profitability.md](22_Pricing_Profitability.md).
