@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (21-document BA/DS pack)
-│   ├── README.md               # docs index → 01–21
-│   ├── 01_Project_Charter.md … 21_Inventory_Simulation.md
+├── docs/                       # project documentation (22-document BA/DS pack)
+│   ├── README.md               # docs index → 01–22
+│   ├── 01_Project_Charter.md … 22_Pricing_Profitability.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -57,7 +57,8 @@ store-sales-time-series-forecasting/
 │   ├── phase5_powerbi_export.py
 │   ├── phase6_simulation_layer.py   # simulated commercial layer (price, cost, margin)
 │   ├── phase7_procurement.py        # simulated suppliers, purchase orders, receipts
-│   └── phase8_inventory.py          # inventory derived from the receipt flow
+│   ├── phase8_inventory.py          # inventory derived from the receipt flow
+│   └── phase9_pricing.py            # pricing, margin, markdown, margin bridge
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -119,7 +120,7 @@ competition data does not contain (price, cost, inventory, suppliers) — see
 | B1 | Commercial simulation layer (price, discount, cost, margin) | `phase6_simulation_layer.py` | ✅ |
 | B6 | Procurement & supplier foundation (PO, lead time, spend) | `phase7_procurement.py` | ✅ |
 | B4 | Inventory & merchandising (sell-through, turnover, WoS, GMROI, OOS) | `phase8_inventory.py` | ✅ |
-| B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ☐ |
+| B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ✅ |
 | B3 | Scenario-based price elasticity | `phase10_elasticity.py` | ☐ |
 | B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ☐ |
 | B7 | Scenario analysis | `phase12_scenario.py` | ☐ |
@@ -211,6 +212,16 @@ because procurement has to exist before inventory can be derived from it.
 - Building this phase is what exposed the phase-7 ordering flaw fixed in the previous commit. That is the point of deriving inventory instead of generating it: the downstream result corrected an upstream business rule.
 - Equation, audit, KPI definitions and limits: [docs/21_Inventory_Simulation.md](docs/21_Inventory_Simulation.md).
 
+## Data Notes (from Phase 9 — Pricing & Profitability)
+
+- No new simulated data. This phase turns the existing chain into commercial KPIs and is built around one reconciliation: **which quantity carries the revenue**.
+- Phase 6 priced every *observed* unit; phase 8 showed the simulated supply chain could not always deliver them. Booking revenue on observed units would credit the scenario with goods that, inside the same scenario, were never on the shelf. So revenue is booked on **fulfilled** quantity from here on, and the demand-side figure is kept only as the potential the shortfall is measured against: 2.297B USD potential, **2.263B USD fulfilled**, 33.9M USD shortfall (1.48%).
+- That identity only holds in float64 — a float32 × float32 product stays float32 in pandas and silently loses the precision it depends on, which is why `observed_units` was widened in phase 8.
+- Headline (simulated): 194.2M USD markdown given away (7.9% of list revenue), 511.1M USD gross margin at **22.6%** — the same margin structure the price book was calibrated to in docs/19, surviving the supply constraint without being re-tuned.
+- The margin bridge decomposes each year's margin change into volume, price and cost effects, computed per family so product mix needs no residual term. Families absent in one of the two years are labelled `assortment_change` and booked to volume — otherwise the terms would be `NaN` and a skipna sum would quietly drop them, which is how a bridge stops adding up unnoticed.
+- Store price position is basket-adjusted against the chain's average net price per family, so a store selling cheap families is not mistaken for a cheap store.
+- Definitions, bridge formulas and limits: [docs/22_Pricing_Profitability.md](docs/22_Pricing_Profitability.md). Readable summary: [reports/pricing_profitability_sim.md](reports/pricing_profitability_sim.md).
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -253,6 +264,7 @@ python etl/phase5_powerbi_export.py          # star-schema export -> dashboard/d
 python etl/phase6_simulation_layer.py        # simulated commercial layer -> data/processed/
 python etl/phase7_procurement.py             # simulated suppliers / POs / receipts
 python etl/phase8_inventory.py               # inventory derived from receipts -> KPIs
+python etl/phase9_pricing.py                 # pricing / margin / markdown / margin bridge
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```

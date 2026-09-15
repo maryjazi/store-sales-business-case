@@ -15,6 +15,7 @@ python etl/phase5_powerbi_export.py
 python etl/phase6_simulation_layer.py
 python etl/phase7_procurement.py
 python etl/phase8_inventory.py
+python etl/phase9_pricing.py
 ```
 
 ## Phase map
@@ -31,6 +32,7 @@ python etl/phase8_inventory.py
 | 6 | `phase6_simulation_layer.py` | `fact_sales_commercial.parquet`, `dim_product_cost.csv`, `dim_store_price_index.csv` |
 | 7 | `phase7_procurement.py` | `fact_purchase_order_sim.parquet`, `dim_supplier_sim.csv`, `dim_family_sourcing_sim.csv` |
 | 8 | `phase8_inventory.py` | `fact_inventory_sim.parquet`, `kpi_inventory_sim.csv`, `kpi_inventory_store_sim.csv` |
+| 9 | `phase9_pricing.py` | `kpi_pricing_sim.csv`, `kpi_pricing_store_sim.csv`, `kpi_margin_bridge_sim.csv`, `reports/pricing_profitability_sim.md` |
 
 ## Validation checkpoints
 
@@ -42,6 +44,7 @@ After each phase, confirm the expected artifact exists and row counts match READ
 - Phase 6: commercial layer **3,000,888 rows**, chain gross margin ≈ **22.6%** (test-enforced band: 20–28%)
 - Phase 7: **294,535 PO lines**, on-time delivery ≈ **86.5%** (test-enforced band: 80–92%)
 - Phase 8: inventory equation reconciles exactly (the script aborts otherwise); simulated demand fulfillment rate ≈ **98.5%** (test-enforced band: 95–100%)
+- Phase 9: revenue views reconcile and the margin bridge closes (the script aborts otherwise); chain gross margin ≈ **22.6%** (test-enforced band: 20–28%)
 
 ## SQL alternative
 

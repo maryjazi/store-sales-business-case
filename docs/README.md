@@ -34,6 +34,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 | 19 | [Simulation Design](19_Simulation_Design.md) | Commercial simulation layer: rules, price book, provenance |
 | 20 | [Procurement Simulation](20_Procurement_Simulation.md) | Suppliers, purchase orders, receipts: rules and scenario bounds |
 | 21 | [Inventory Simulation](21_Inventory_Simulation.md) | Inventory derived from receipts: equation, audit, merchandising KPIs |
+| 22 | [Pricing & Profitability](22_Pricing_Profitability.md) | Revenue basis reconciliation, margin, markdown, margin bridge |
 
 ## Technical reference (legacy / quick links)
 
@@ -49,5 +50,6 @@ Project documentation for Store Sales Analytics & Forecasting.
 |---|---|
 | Business Case | [reports/business_case.md](../reports/business_case.md) |
 | KPI Report | [reports/kpi_report.md](../reports/kpi_report.md) |
+| Pricing & Profitability (simulated) | [reports/pricing_profitability_sim.md](../reports/pricing_profitability_sim.md) |
 | SQL Scripts | [sql/](../sql/) |
 | Portfolio Summary | [PORTFOLIO_SUMMARY.md](../PORTFOLIO_SUMMARY.md) |

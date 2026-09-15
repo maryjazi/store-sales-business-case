@@ -169,7 +169,7 @@ figure labelled as simulated (P-06).
 | discount_pct_sim | simulated | R4 — depth is modelled, exposure is not (also the markdown %) |
 | net_price_sim | simulated | list × (1 − discount) |
 | unit_cost_sim | simulated | R5 |
-| revenue_sim, cogs_sim, gross_margin_sim | simulated | R6 |
+| revenue_sim, cogs_sim, gross_margin_sim | simulated | R6 — the **demand-side** view, priced on observed units. From phase 9 onward the canonical revenue is booked on *fulfilled* quantity instead (see [22_Pricing_Profitability.md](22_Pricing_Profitability.md) §2) |
 
 ---
 

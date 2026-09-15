@@ -32,8 +32,8 @@ promotion analytics on the same sales history, using the simulation layer docume
 | B1 | Commercial Simulation Layer | `phase6_simulation_layer.py` | ✅ Done |
 | B6 | Procurement & Supplier Foundation | `phase7_procurement.py` | ✅ Done |
 | B4 | Inventory & Merchandising | `phase8_inventory.py` | ✅ Done |
-| B2 | Pricing & Profitability | `phase9_pricing.py` | ☐ Next |
-| B3 | Scenario-based Price Elasticity | `phase10_elasticity.py` | ☐ Not started |
+| B2 | Pricing & Profitability | `phase9_pricing.py` | ✅ Done |
+| B3 | Scenario-based Price Elasticity | `phase10_elasticity.py` | ☐ Next |
 | B5 | Promotion Effectiveness | `phase11_promotion.py` | ☐ Not started |
 | B7 | Scenario Analysis | `phase12_scenario.py` | ☐ Not started |
 | B8 | Commercial Cockpit | `phase13_commercial_export.py` | ☐ Not started |

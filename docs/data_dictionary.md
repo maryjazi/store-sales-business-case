@@ -70,6 +70,16 @@
 | `kpi_inventory_sim` | Merchandising KPIs per family | CSV |
 | `kpi_inventory_store_sim` | Merchandising KPIs per store | CSV |
 
+## Pricing layer (`data/processed/`, phase 9 — derived)
+
+| Table | Role | Format |
+|---|---|---|
+| `kpi_pricing_sim` | Revenue (fulfilled basis), markdown, margin per family | CSV |
+| `kpi_pricing_store_sim` | The same per store, plus basket-adjusted price position | CSV |
+| `kpi_margin_bridge_sim` | YoY margin change split into volume, price and cost effects | CSV |
+
+Revenue basis and definitions: [22_Pricing_Profitability.md](22_Pricing_Profitability.md).
+
 Equation, audit and KPI definitions: [21_Inventory_Simulation.md](21_Inventory_Simulation.md).
 
 Rules and provenance: [20_Procurement_Simulation.md](20_Procurement_Simulation.md).
