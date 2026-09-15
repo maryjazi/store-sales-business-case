@@ -16,10 +16,18 @@ PROCESSED = os.path.join(ROOT, "data", "processed")
 GENERATED = [n for n in schema.table_names() if os.path.exists(os.path.join(PROCESSED, n))]
 
 
-def test_the_contract_covers_every_phase_6_to_9_output():
-    for phase in (6, 7, 8, 9):
+def test_the_contract_covers_every_generated_output():
+    """Every phase that writes a table must declare it. A phase whose outputs are missing
+    from the contract is exactly the blind spot this module exists to remove."""
+    for phase in (6, 7, 8, 9, 10):
         assert schema.table_names(phase), f"no output declared for phase {phase}"
-    assert len(schema.SCHEMAS) == 12
+    declared = set(schema.SCHEMAS)
+    on_disk = {f for f in os.listdir(PROCESSED)
+               if f.startswith(("fact_", "dim_", "kpi_", "diagnostic_"))
+               and f.endswith((".csv", ".parquet"))
+               and not f.startswith(("fact_sales_actual", "fact_sales_forecast"))}
+    undeclared = on_disk - declared - {"kpi_store.csv", "kpi_category.csv", "kpi_monthly.csv"}
+    assert not undeclared, f"tables written without a contract: {sorted(undeclared)}"
 
 
 @pytest.mark.skipif(not GENERATED, reason="pipeline outputs not generated yet")

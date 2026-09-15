@@ -182,6 +182,15 @@ deliberately broken frames and requiring them to raise.
 `schema.LINEAGE_COLUMNS` marks the columns that carry an audit chain; narrowing one of them
 is reported as a contract violation, which is exactly the defect that started this.
 
+### Rounded outputs are not inputs
+
+**Rounded presentation outputs must never become computational inputs.** Phase 10 read the
+average price from the KPI file, which is rounded to three decimals for readability. The
+break-even ratio `m / (m + x)` has a tiny denominator when a price cut approaches the margin,
+so that third decimal was amplified into a 9.3% error — caught only because the round-trip
+audit refused it. Averages and rates are now recomputed from the unrounded totals, which also
+keeps `m = (P − C) / P` true by construction rather than by luck.
+
 ### Cross-layer invariants
 
 A contract cannot catch everything. Two files can carry perfectly correct dtypes and still

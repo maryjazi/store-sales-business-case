@@ -128,3 +128,33 @@ def assert_cross_layer_margin_consistency(inventory_kpi, pricing_kpi,
         if total > total_atol:
             raise AuditError("phase8.%s and phase9.%s disagree by %.4f in total"
                              % (inv_col, pri_col, total))
+
+
+def assert_break_even_roundtrip(be, rtol=1e-6):
+    """B3-1 claims that applying the break-even volume ratio keeps gross margin flat.
+    That claim is checked here rather than trusted: rebuild the margin from the ratio and
+    the new price, and require the baseline back.
+
+        units x (m/(m+x)) x (P(1+x) - C) == units x (P - C)
+
+    Infeasible rows - where the price cut is deeper than the margin, so no volume can
+    restore it - must carry no ratio at all rather than a misleading number.
+    """
+    required = ["baseline_units_sim", "baseline_margin_sim", "break_even_volume_ratio_sim",
+                "new_price_sim", "avg_unit_cost_sim", "feasibility_flag"]
+    missing = [c for c in required if c not in be.columns]
+    if missing:
+        raise AuditError("break-even audit needs columns %s" % missing)
+
+    feasible = be[be["feasibility_flag"] == "feasible"]
+    restored = (feasible["baseline_units_sim"] * feasible["break_even_volume_ratio_sim"]
+                * (feasible["new_price_sim"] - feasible["avg_unit_cost_sim"]))
+    denom = feasible["baseline_margin_sim"].abs().clip(lower=1.0)
+    _fail("break-even ratio restores the baseline margin",
+          (restored - feasible["baseline_margin_sim"]) / denom, rtol)
+
+    infeasible = be[be["feasibility_flag"] != "feasible"]
+    if len(infeasible) and infeasible["break_even_volume_ratio_sim"].notna().any():
+        raise AuditError("rows where margin cannot be restored still carry a break-even ratio")
+    if feasible["break_even_volume_ratio_sim"].isna().any():
+        raise AuditError("a feasible row has no break-even ratio")

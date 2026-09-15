@@ -252,6 +252,60 @@ SCHEMAS = {
             "bridge_residual": "float64",
         },
     },
+    "kpi_break_even_elasticity_sim.csv": {
+        "phase": 10,
+        "format": "csv",
+        "columns": {
+            "family": "object",
+            "price_change_pct": "float64",
+            "baseline_units_sim": "float64",
+            "baseline_revenue_sim": "float64",
+            "baseline_margin_sim": "float64",
+            "margin_rate_sim": "float64",
+            "avg_net_price_sim": "float64",
+            "avg_unit_cost_sim": "float64",
+            "new_price_sim": "float64",
+            "break_even_volume_ratio_sim": "float64",
+            "break_even_volume_change_pct_sim": "float64",
+            "feasibility_flag": "object",
+            "below_cost_flag": "bool",
+        },
+    },
+    "kpi_price_scenario_sim.csv": {
+        "phase": 10,
+        "format": "csv",
+        "columns": {
+            "family": "object",
+            "price_change_pct": "float64",
+            "elasticity_assumption": "float64",
+            "baseline_units_sim": "float64",
+            "baseline_revenue_sim": "float64",
+            "baseline_margin_sim": "float64",
+            "new_price_sim": "float64",
+            "volume_ratio_sim": "float64",
+            "new_units_sim": "float64",
+            "new_revenue_sim": "float64",
+            "new_cogs_sim": "float64",
+            "new_margin_sim": "float64",
+            "revenue_change_vs_baseline_pct": "float64",
+            "margin_change_vs_baseline_pct": "float64",
+            "below_cost_flag": "bool",
+        },
+    },
+    # Kept deliberately OUTSIDE the KPI family: this is a methodological demonstration of why
+    # a price/volume regression on simulated prices is not elasticity evidence (docs/23 §4),
+    # not a result. The `diagnostic_` prefix is the signal.
+    "diagnostic_price_volume_regression_sim.csv": {
+        "phase": 10,
+        "format": "csv",
+        "columns": {
+            "family": "object",
+            "n_rows": "int64",
+            "log_log_slope": "float64",
+            "r_squared": "float64",
+            "interpretation_warning": "object",
+        },
+    },
 }
 
 # Columns that carry an audit chain: they must never be narrowed, because the

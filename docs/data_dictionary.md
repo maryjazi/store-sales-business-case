@@ -78,6 +78,16 @@
 | `kpi_pricing_store_sim` | The same per store, plus basket-adjusted price position | CSV |
 | `kpi_margin_bridge_sim` | YoY margin change split into volume, price and cost effects | CSV |
 
+## Price sensitivity layer (`data/processed/`, phase 10 — derived)
+
+| Table | Role | Format |
+|---|---|---|
+| `kpi_break_even_elasticity_sim` | Volume needed to hold margin at each price step, per family | CSV |
+| `kpi_price_scenario_sim` | Price grid × explicit elasticity assumptions → revenue and margin change | CSV |
+| `diagnostic_price_volume_regression_sim` | **Not a KPI.** Methodological guardrail showing why a regression on simulated prices is not elasticity evidence | CSV |
+
+Design and limits: [23_Price_Sensitivity_Design.md](23_Price_Sensitivity_Design.md).
+
 Revenue basis and definitions: [22_Pricing_Profitability.md](22_Pricing_Profitability.md).
 
 Equation, audit and KPI definitions: [21_Inventory_Simulation.md](21_Inventory_Simulation.md).
