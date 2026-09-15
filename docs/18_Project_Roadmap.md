@@ -21,6 +21,25 @@
 
 ---
 
+## 1b. Track 2 — Commercial analytics (in progress)
+
+Scope locked: pricing, profitability, retail/merchandising, inventory, procurement, supplier and
+promotion analytics on the same sales history, using the simulation layer documented in
+[19_Simulation_Design.md](19_Simulation_Design.md).
+
+| Step | Name | Script | Status |
+|---|---|---|---|
+| B1 | Commercial Simulation Layer | `phase6_simulation_layer.py` | ✅ Done |
+| B6 | Procurement & Supplier Foundation | `phase7_procurement.py` | ☐ Next |
+| B4 | Inventory & Merchandising | `phase8_inventory.py` | ☐ Not started |
+| B2 | Pricing & Profitability | `phase9_pricing.py` | ☐ Not started |
+| B3 | Scenario-based Price Elasticity | `phase10_elasticity.py` | ☐ Not started |
+| B5 | Promotion Effectiveness | `phase11_promotion.py` | ☐ Not started |
+| B7 | Scenario Analysis | `phase12_scenario.py` | ☐ Not started |
+| B8 | Commercial Cockpit | `phase13_commercial_export.py` | ☐ Not started |
+
+---
+
 ## 2. Timeline (actual)
 
 ```

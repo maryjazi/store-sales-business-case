@@ -45,3 +45,13 @@
 | `dim_store` | Store attributes | CSV |
 | `dim_date` | Calendar attributes | CSV |
 | `dim_family` | Product family + `family_group` | CSV |
+
+## Commercial layer (`data/processed/`, phase 6 — simulated)
+
+| Table | Role | Format |
+|---|---|---|
+| `fact_sales_commercial` | Real units + simulated price, cost, revenue, margin (`_sim` columns) | Parquet |
+| `dim_product_cost` | Base price and cost ratio per family | CSV |
+| `dim_store_price_index` | Store-level price index | CSV |
+
+Rules and provenance: [19_Simulation_Design.md](19_Simulation_Design.md).

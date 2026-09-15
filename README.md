@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (18-document BA/DS pack)
-│   ├── README.md               # docs index → 01–18
-│   ├── 01_Project_Charter.md … 18_Project_Roadmap.md
+├── docs/                       # project documentation (19-document BA/DS pack)
+│   ├── README.md               # docs index → 01–19
+│   ├── 01_Project_Charter.md … 19_Simulation_Design.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -54,7 +54,8 @@ store-sales-time-series-forecasting/
 │   ├── phase3_kpi_reporting.py
 │   ├── phase4_forecasting.py
 │   ├── phase4b_generate_forecast.py
-│   └── phase5_powerbi_export.py
+│   ├── phase5_powerbi_export.py
+│   └── phase6_simulation_layer.py   # simulated commercial layer (price, cost, margin)
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -104,6 +105,27 @@ store-sales-time-series-forecasting/
 | 7 | Portfolio packaging | 🟡 (README/LICENSE/summary done; GitHub publish + 2 of 4 dashboard screenshots pending) |
 
 *(Status will be updated as each phase is completed.)*
+
+### Track 2 — Commercial, pricing, procurement & retail analytics
+
+Built on the same sales history, with a documented simulation layer for the columns the
+competition data does not contain (price, cost, inventory, suppliers) — see
+[docs/19_Simulation_Design.md](docs/19_Simulation_Design.md).
+
+| Step | Description | Script | Status |
+|---|---|---|---|
+| B1 | Commercial simulation layer (price, discount, cost, margin) | `phase6_simulation_layer.py` | ✅ |
+| B6 | Procurement & supplier foundation (PO, lead time, spend) | `phase7_procurement.py` | ☐ |
+| B4 | Inventory & merchandising (sell-through, turnover, WoS, GMROI, OOS) | `phase8_inventory.py` | ☐ |
+| B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ☐ |
+| B3 | Scenario-based price elasticity | `phase10_elasticity.py` | ☐ |
+| B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ☐ |
+| B7 | Scenario analysis | `phase12_scenario.py` | ☐ |
+| B8 | Commercial cockpit (Executive / Pricing / Procurement / Retail) | `phase13_commercial_export.py` | ☐ |
+
+Step letters follow the locked Track-2 scope; the scripts are numbered in execution order,
+because procurement has to exist before inventory can be derived from it.
+
 
 ## Data Notes (from Phase 0)
 
@@ -159,6 +181,15 @@ store-sales-time-series-forecasting/
 - Relationships, DAX measures, page layout, and slicers are documented in `docs/17_Dashboard_Design.md`.
 - Actual `.pbix` file and screenshots are built locally in Power BI Desktop (not generated here).
 
+## Data Notes (from Phase 6 — Commercial Simulation Layer)
+
+- The competition data has no price, cost, inventory or supplier column, so every commercial KPI needs a modeled layer. `etl/phase6_simulation_layer.py` adds one **beside** the real tables, never inside them: real columns keep their plain names (`units`, `onpromotion`), every simulated column ends in `_sim`, and a test fails if that convention is broken.
+- Promotion **occurrence and exposure are real** (`onpromotion`); the **discount depth is simulated** — 5% at the lowest exposure, up to 30% at the highest. `onpromotion` records that a promotion ran, never how deep the price cut was.
+- List price is store-indexed but cost is carried centrally, so margins differ across stores for a reason that can be explained rather than by random noise.
+- Calibration: **simulated** revenue of 2.30B USD on 1.07B real units, **22.6% simulated chain gross margin** (thinnest GROCERY I 18.0%, widest LINGERIE 54.3%), 12.6% average simulated discount across the 611,329 promoted rows. Cost ratios are scenario assumptions, not estimates of Favorita's real costs; the declared scenario bounds (20–28%) are asserted in the test suite, so a later change to the price book fails loudly instead of drifting silently.
+- Every monetary figure carries its provenance wherever it appears — "simulated revenue", never "revenue". That rule (P-06) applies to reports, dashboard KPI titles and CV bullets alike.
+- Full rule set, price book, and the limits of what may be claimed from it: [docs/19_Simulation_Design.md](docs/19_Simulation_Design.md).
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -198,6 +229,7 @@ python etl/phase3_kpi_reporting.py           # KPI tables -> reports/ and data/p
 python etl/phase4_forecasting.py             # train + validate forecasting model
 python etl/phase4b_generate_forecast.py      # score the model on prepared_test.parquet -> forecast files
 python etl/phase5_powerbi_export.py          # star-schema export -> dashboard/data/
+python etl/phase6_simulation_layer.py        # simulated commercial layer -> data/processed/
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```
