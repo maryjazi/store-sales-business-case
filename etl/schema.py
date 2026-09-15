@@ -135,10 +135,10 @@ SCHEMAS = {
             "fulfilled_units_sim": "float64",
             "unfulfilled_units_sim": "float64",
             "closing_stock": "float64",
-            "inventory_value_at_cost_sim": "float32",
-            "fulfilled_revenue_sim": "float32",
-            "fulfilled_cogs_sim": "float32",
-            "fulfilled_margin_sim": "float32",
+            "inventory_value_at_cost_sim": "float64",
+            "fulfilled_revenue_sim": "float64",
+            "fulfilled_cogs_sim": "float64",
+            "fulfilled_margin_sim": "float64",
             "stockout_day_sim": "bool",
             "zero_stock_day_sim": "bool",
         },
@@ -260,6 +260,10 @@ LINEAGE_COLUMNS = {
     "fact_inventory_sim.parquet": [
         "observed_units", "receipts", "opening_stock", "available",
         "fulfilled_units_sim", "unfulfilled_units_sim", "closing_stock",
+        # monetary columns: phase 9 recomputes these concepts independently, so both layers
+        # must calculate in float64 or they land on two values for one concept
+        "inventory_value_at_cost_sim", "fulfilled_revenue_sim", "fulfilled_cogs_sim",
+        "fulfilled_margin_sim",
     ],
 }
 

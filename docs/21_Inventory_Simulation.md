@@ -153,7 +153,7 @@ observed sales as true demand.
 | receipts | from phase 7 receipts |
 | opening_stock, available, closing_stock | derived (§3) |
 | fulfilled_units_sim, unfulfilled_units_sim | derived (§3) |
-| inventory_value_at_cost_sim, fulfilled_revenue_sim, fulfilled_cogs_sim, fulfilled_margin_sim | derived with phase-6 prices and costs |
+| inventory_value_at_cost_sim, fulfilled_revenue_sim, fulfilled_cogs_sim, fulfilled_margin_sim | derived with phase-6 prices and costs — **float64**, because phase 9 derives the same concepts independently and the two layers must land on one value, not two that agree to seven digits (docs/15 §3a) |
 | stockout_day_sim, zero_stock_day_sim | flags |
 
 ---

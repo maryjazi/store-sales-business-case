@@ -79,6 +79,12 @@ def main():
     df = pd.read_parquet(sales_path, columns=["date", "store_nbr", "family", "units",
                                               "unit_cost_sim", "net_price_sim"])
     df["family"] = df["family"].astype(str)
+    # The monetary operands are widened HERE, before any arithmetic. Casting the result
+    # afterwards would not help: a float32 x float32 product has already lost the precision
+    # by then, and phase 9 computes the same quantities in float64 - the two layers must
+    # produce one value for one concept, not two that agree to seven digits.
+    for col in ("unit_cost_sim", "net_price_sim"):
+        df[col] = df[col].astype("float64")
     df = df.sort_values(GROUP + ["date"]).reset_index(drop=True)
     print("sales grid:", df.shape)
 
@@ -145,6 +151,10 @@ def main():
     # nothing reconciles against, are stored as float32.
     lineage = ["observed_units", "receipts", "opening_stock", "available",
                "fulfilled_units_sim", "unfulfilled_units_sim", "closing_stock"]
+    # monetary columns stay float64 too: they are aggregated into KPIs that phase 9
+    # computes independently, and both must land on the same number
+    lineage += ["inventory_value_at_cost_sim", "fulfilled_revenue_sim", "fulfilled_cogs_sim",
+                "fulfilled_margin_sim"]
     for col in fact.columns:
         if fact[col].dtype == "float64" and col not in lineage:
             fact[col] = fact[col].astype("float32")

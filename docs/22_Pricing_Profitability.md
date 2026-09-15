@@ -41,7 +41,10 @@ figure is never presented on its own, and never without the word *potential*.
 
 The reconciliation lives in `etl/audit.py` (`assert_revenue_views`, `assert_margin_bridge`)
 and is called both by phase 9 before it writes and by `tests/test_pricing_layer.py` against
-the written files — see docs/15 §3a. Note that it only holds in float64: `observed_units` had to be
+the written files — see docs/15 §3a.
+
+Phase 9 also asserts a **cross-layer invariant**: the margin and COGS it derives here must
+equal the ones phase 8 derived on the same fulfilled quantity. One concept, one value. Note that it only holds in float64: `observed_units` had to be
 widened in phase 8, because a float32 × float32 product in pandas stays float32 and silently
 loses the precision the identity depends on.
 

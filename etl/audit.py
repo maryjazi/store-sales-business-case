@@ -95,3 +95,36 @@ def assert_margin_bridge(bridge, atol=1.0):
         odd = bridge[bridge["bridge_case"] == "assortment_change"]
         if len(odd) and (odd[["price_effect_sim", "cost_effect_sim"]].abs() > atol).any().any():
             raise AuditError("assortment-change rows carry a price or cost effect")
+
+
+# KPI files are rounded to three decimals on write, so the cross-layer comparison below is
+# defined against that rounding, not against bit equality.
+CROSS_LAYER_ATOL_PER_FAMILY = 0.01
+CROSS_LAYER_ATOL_TOTAL = 0.50
+
+
+def assert_cross_layer_margin_consistency(inventory_kpi, pricing_kpi,
+                                          per_family_atol=CROSS_LAYER_ATOL_PER_FAMILY,
+                                          total_atol=CROSS_LAYER_ATOL_TOTAL):
+    """Phase 8 and phase 9 compute margin, COGS and revenue on fulfilled quantity
+    independently. One concept must have one value.
+
+    This is the failure a schema contract cannot catch: both files can carry perfectly
+    correct dtypes and still disagree semantically, because one layer calculated in float32
+    and the other in float64.
+    """
+    pairs = [("fulfilled_margin", "gross_margin_sim"),
+             ("fulfilled_cogs", "cogs_sim")]
+    merged = inventory_kpi.merge(pricing_kpi, on="family", how="outer", indicator=True)
+    if (merged["_merge"] != "both").any():
+        raise AuditError("the two layers do not cover the same families")
+    for inv_col, pri_col in pairs:
+        if inv_col not in merged.columns or pri_col not in merged.columns:
+            raise AuditError("cross-layer audit needs %s and %s" % (inv_col, pri_col))
+        delta = merged[inv_col] - merged[pri_col]
+        _fail("phase8.%s = phase9.%s (per family)" % (inv_col, pri_col), delta,
+              per_family_atol)
+        total = abs(merged[inv_col].sum() - merged[pri_col].sum())
+        if total > total_atol:
+            raise AuditError("phase8.%s and phase9.%s disagree by %.4f in total"
+                             % (inv_col, pri_col, total))

@@ -182,6 +182,24 @@ deliberately broken frames and requiring them to raise.
 `schema.LINEAGE_COLUMNS` marks the columns that carry an audit chain; narrowing one of them
 is reported as a contract violation, which is exactly the defect that started this.
 
+### Cross-layer invariants
+
+A contract cannot catch everything. Two files can carry perfectly correct dtypes and still
+disagree **semantically** — which is what happened when phase 8 computed fulfilled margin in
+float32 while phase 9 computed the same concept in float64, leaving one number with two
+values (511,087,550.80 and 511,087,551.62).
+
+The fix is not a cast at the end: once a `float32 × float32` product has been taken, the
+precision is already gone. The monetary **operands** are widened before the arithmetic, and
+the derived columns are declared float64 in the contract. On top of that,
+`audit.assert_cross_layer_margin_consistency` compares phase 8 against phase 9 per family and
+in total — phase 9 runs it in production after writing, and
+`tests/test_cross_layer_consistency.py` runs it against the persisted files. Both layers now
+land on exactly the same number.
+
+Because both KPI files are rounded to three decimals on write, the invariant is defined
+against that rounding rather than against bit equality.
+
 **Known technical debt.** Quantities would be safer as fixed-point `int64` milli-units, which
 would let the inventory equation close exactly instead of within a tolerance. That migration
 touches phases 6–9, the tests and the reports, so it is tracked as future hardening rather

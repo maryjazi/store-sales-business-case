@@ -176,6 +176,11 @@ def main():
     schema.write_table(kpi_store, "kpi_pricing_store_sim.csv", PROCESSED, LOCAL)
     schema.write_table(bridge, "kpi_margin_bridge_sim.csv", PROCESSED, LOCAL)
 
+    # ---- cross-layer invariant: one concept, one value (docs/15 §3a) ----
+    inventory_kpi = schema.read_table("kpi_inventory_sim.csv", PROCESSED)
+    audit.assert_cross_layer_margin_consistency(inventory_kpi, kpi_family)
+    print("cross-layer invariant holds: phase-8 and phase-9 margin and COGS agree")
+
     tot = kpi_family[["demand_revenue_sim", "revenue_sim", "unfulfilled_revenue_sim",
                       "cogs_sim", "gross_margin_sim", "markdown_value_sim",
                       "list_revenue_sim"]].sum()

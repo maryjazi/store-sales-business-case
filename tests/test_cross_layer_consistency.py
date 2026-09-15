@@ -1,0 +1,61 @@
+"""One concept, one value - across layers.
+
+A schema contract cannot catch this class of defect: two files can carry perfectly correct
+dtypes and still disagree semantically, because one layer computed a quantity in float32 and
+the other in float64. Phase 8 and phase 9 derive margin and COGS on fulfilled quantity
+independently, so they are compared here directly.
+
+The KPI files are rounded to three decimals on write, so the invariant is defined against
+that rounding rather than against bit equality.
+"""
+import os
+
+import pandas as pd
+import pytest
+
+import audit
+import schema
+
+ROOT = os.path.join(os.path.dirname(__file__), "..")
+PROCESSED = os.path.join(ROOT, "data", "processed")
+INV_KPI = os.path.join(PROCESSED, "kpi_inventory_sim.csv")
+PRI_KPI = os.path.join(PROCESSED, "kpi_pricing_sim.csv")
+
+pytestmark = pytest.mark.skipif(
+    not (os.path.exists(INV_KPI) and os.path.exists(PRI_KPI)),
+    reason="phase 8 / phase 9 outputs not generated yet",
+)
+
+
+@pytest.fixture(scope="module")
+def layers():
+    return (schema.read_table("kpi_inventory_sim.csv", PROCESSED),
+            schema.read_table("kpi_pricing_sim.csv", PROCESSED))
+
+
+def test_margin_and_cogs_agree_across_layers(layers):
+    inventory_kpi, pricing_kpi = layers
+    audit.assert_cross_layer_margin_consistency(inventory_kpi, pricing_kpi)
+
+
+def test_the_invariant_catches_a_layer_drifting(layers):
+    """If phase 8 ever reverts to a narrower calculation path, this must fail."""
+    inventory_kpi, pricing_kpi = layers
+    drifted = inventory_kpi.copy()
+    drifted.loc[0, "fulfilled_margin"] += 1.0
+    with pytest.raises(audit.AuditError):
+        audit.assert_cross_layer_margin_consistency(drifted, pricing_kpi)
+
+
+def test_the_invariant_catches_a_missing_family(layers):
+    inventory_kpi, pricing_kpi = layers
+    with pytest.raises(audit.AuditError, match="same families"):
+        audit.assert_cross_layer_margin_consistency(inventory_kpi.iloc[1:], pricing_kpi)
+
+
+def test_monetary_columns_are_float64_in_both_layers():
+    inv = schema.read_table("fact_inventory_sim.parquet", PROCESSED,
+                            columns=["fulfilled_cogs_sim", "fulfilled_margin_sim",
+                                     "fulfilled_revenue_sim", "inventory_value_at_cost_sim"])
+    for col in inv.columns:
+        assert inv[col].dtype == "float64", f"{col} is {inv[col].dtype}"
