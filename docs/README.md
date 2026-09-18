@@ -38,6 +38,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 | 23 | [Price Sensitivity & Break-even](23_Price_Sensitivity_Design.md) | Break-even arithmetic, scenario assumptions, and why no elasticity is estimated |
 | 24 | [Promotion Effectiveness](24_Promotion_Effectiveness_Design.md) | Observational uplift, placebo test, promo economics, identification limits |
 | 25 | [Commercial Scenario Design](25_Scenario_Design.md) | Policy levers, the baseline anchor, and one common KPI set |
+| 26 | [Commercial Cockpit Design](26_Commercial_Cockpit_Design.md) | The cockpit model, provenance as data, and the chart rules |
 
 ## Technical reference (legacy / quick links)
 
@@ -58,4 +59,5 @@ Project documentation for Store Sales Analytics & Forecasting.
 | Promotion Effectiveness | [reports/promotion_effectiveness.md](../reports/promotion_effectiveness.md) |
 | Commercial Scenarios (simulated) | [reports/commercial_scenarios_sim.md](../reports/commercial_scenarios_sim.md) |
 | SQL Scripts | [sql/](../sql/) |
+| Power BI build guide (commercial) | [dashboard/commercial/POWERBI_COMMERCIAL_GUIDE.md](../dashboard/commercial/POWERBI_COMMERCIAL_GUIDE.md) |
 | Portfolio Summary | [PORTFOLIO_SUMMARY.md](../PORTFOLIO_SUMMARY.md) |

@@ -102,6 +102,17 @@
 | `kpi_commercial_scenarios_sim` | Scenario × family on the common KPI set | CSV |
 | `kpi_scenario_summary_sim` | Scenario totals and change against the baseline | CSV |
 
+## Cockpit model (`dashboard/commercial/`, phase 13)
+
+| Table | Role | Format |
+|---|---|---|
+| `fact_commercial_monthly` | month × store × family: units, revenue, margin, markdown, inventory, OOS days | Parquet |
+| `fact_procurement_monthly` | month × store × family × supplier: spend, PPV, service levels, lead time | Parquet |
+| `dim_family_commercial`, `dim_supplier_commercial` | dimensions | CSV |
+| `dim_measure_provenance` | **Every measure's provenance tier** — the cockpit builds its labels from this and raises on an undeclared measure | CSV |
+
+Design: [26_Commercial_Cockpit_Design.md](26_Commercial_Cockpit_Design.md).
+
 Levers, mappings and limits: [25_Scenario_Design.md](25_Scenario_Design.md).
 
 Design and limits: [24_Promotion_Effectiveness_Design.md](24_Promotion_Effectiveness_Design.md).

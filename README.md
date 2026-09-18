@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (25-document BA/DS pack)
-│   ├── README.md               # docs index → 01–25
-│   ├── 01_Project_Charter.md … 25_Scenario_Design.md
+├── docs/                       # project documentation (26-document BA/DS pack)
+│   ├── README.md               # docs index → 01–26
+│   ├── 01_Project_Charter.md … 26_Commercial_Cockpit_Design.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -63,7 +63,8 @@ store-sales-time-series-forecasting/
 │   ├── phase9_pricing.py            # pricing, margin, markdown, margin bridge
 │   ├── phase10_price_sensitivity.py # break-even and price-scenario analysis
 │   ├── phase11_promotion.py         # observational uplift, placebo test, promo economics
-│   └── phase12_scenario.py          # commercial scenarios: a decision layer over the rest
+│   ├── phase12_scenario.py          # commercial scenarios: a decision layer over the rest
+│   └── phase13_commercial_export.py # cockpit model + machine-readable provenance table
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -90,6 +91,11 @@ store-sales-time-series-forecasting/
 │   │   ├── dim_store.csv
 │   │   ├── dim_date.csv
 │   │   └── dim_family.csv
+│   ├── commercial/             # cockpit model (B8): monthly star schema + provenance table
+│   │   └── POWERBI_COMMERCIAL_GUIDE.md
+│   ├── cockpit_data.py         # Streamlit-free data & provenance layer (testable)
+│   ├── commercial_app.py       # Commercial Cockpit — Executive/Pricing/Procurement/Retail
+│   ├── app.py                  # sales & forecast dashboard (Streamlit)
 │   ├── store_sales.pbix        # Power BI file (built locally, not committed)
 │   └── screenshots/            # dashboard screenshots for README / portfolio
 │
@@ -132,7 +138,7 @@ competition data does not contain (price, cost, inventory, suppliers) — see
 | B3 | Break-even & price sensitivity | `phase10_price_sensitivity.py` | ✅ |
 | B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ✅ |
 | B7 | Scenario analysis | `phase12_scenario.py` | ✅ |
-| B8 | Commercial cockpit (Executive / Pricing / Procurement / Retail) | `phase13_commercial_export.py` | ☐ |
+| B8 | Commercial cockpit (Executive / Pricing / Procurement / Retail) | `phase13_commercial_export.py` | ✅ |
 
 Step letters follow the locked Track-2 scope; the scripts are numbered in execution order,
 because procurement has to exist before inventory can be derived from it.
@@ -261,6 +267,15 @@ because procurement has to exist before inventory can be derived from it.
 - The observational uplift is used **only as a qualification filter**, never as a response function. Volume responds to price through the stated elasticity assumption of docs/23, not through anything estimated here.
 - Levers, mappings and limits: [docs/25_Scenario_Design.md](docs/25_Scenario_Design.md). Report: [reports/commercial_scenarios_sim.md](reports/commercial_scenarios_sim.md).
 
+## Data Notes (from Phase 13 — Commercial Cockpit)
+
+- One model, two front ends: a monthly star schema in `dashboard/commercial/` that both Power BI and the Streamlit cockpit read, so they cannot disagree about a number. Four views: Executive, Pricing, Procurement, Retail.
+- **Provenance became data.** `dim_measure_provenance.csv` declares, for every measure in the model, whether it is `REAL`, `SIMULATED`, `DERIVED` or an `OBSERVATIONAL_ESTIMATE`. The cockpit builds every title from that table and **raises on an undeclared measure**; the export refuses to write one. Rule P-06 no longer depends on anyone remembering it.
+- Cockpit totals are asserted against the committed phase-9 KPIs — an aggregation that doesn't land on the numbers the pipeline already committed is a recalculation, and the tests fail it.
+- Chart rules that prevent specific misreadings: one axis per chart (revenue and margin % are two charts, never two y-scales), ratios of sums rather than means of ratios, and at most three categorical series with a diverging pair reserved for signed gaps.
+- The `.pbix` is built from [dashboard/commercial/POWERBI_COMMERCIAL_GUIDE.md](dashboard/commercial/POWERBI_COMMERCIAL_GUIDE.md), which carries the same naming rule into DAX (`Revenue (simulated)`, never `Revenue`). What is committed here is the model, the guide and a working Streamlit cockpit — not a screenshot of a file nobody can open.
+- Design: [docs/26_Commercial_Cockpit_Design.md](docs/26_Commercial_Cockpit_Design.md). Run it with `streamlit run dashboard/commercial_app.py`.
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -307,6 +322,7 @@ python etl/phase9_pricing.py                 # pricing / margin / markdown / mar
 python etl/phase10_price_sensitivity.py      # break-even + price scenarios
 python etl/phase11_promotion.py              # promotion uplift, placebo, economics
 python etl/phase12_scenario.py               # commercial scenarios on one KPI set
+python etl/phase13_commercial_export.py      # cockpit model -> dashboard/commercial/
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```

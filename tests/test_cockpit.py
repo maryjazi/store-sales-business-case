@@ -1,0 +1,101 @@
+"""Guardrails for the commercial cockpit model and its provenance labelling (phase 13).
+
+The cockpit is where every earlier phase becomes visible at once, so it is also where a
+provenance slip would do the most damage: a simulated revenue figure on a dashboard looks
+exactly like a real one. Rule P-06 is therefore enforced as data here, and these tests check
+the enforcement rather than trusting it.
+"""
+import os
+
+import pandas as pd
+import pytest
+
+import cockpit_data as cd
+import schema
+
+ROOT = os.path.join(os.path.dirname(__file__), "..")
+PROCESSED = os.path.join(ROOT, "data", "processed")
+MODEL = os.path.join(ROOT, "dashboard", "commercial")
+FACT = os.path.join(MODEL, "fact_commercial_monthly.parquet")
+
+pytestmark = pytest.mark.skipif(
+    not os.path.exists(FACT),
+    reason="Cockpit model not generated - run etl/phase13_commercial_export.py first")
+
+MODEL_TABLES = schema.table_names(13)
+GRAIN_COLUMNS = {"month", "store_nbr", "family", "supplier_id", "days", "po_lines"}
+
+
+@pytest.fixture(scope="module")
+def model():
+    return cd.load_model()
+
+
+@pytest.mark.parametrize("name", MODEL_TABLES)
+def test_model_table_matches_its_contract(name):
+    df = schema.read_table(name, MODEL)
+    assert schema.validate(df, name) == []
+
+
+def test_every_measure_on_the_cockpit_declares_its_provenance(model):
+    fact, proc, _, _, provenance = model
+    declared = set(provenance["measure"])
+    measures = {c for c in list(fact.columns) + list(proc.columns) if c not in GRAIN_COLUMNS}
+    assert measures <= declared, f"undeclared on the cockpit: {sorted(measures - declared)}"
+    assert set(provenance["provenance_tier"]) <= set(cd.TIER_SUFFIX)
+
+
+def test_labels_are_derived_from_the_declared_tier(model):
+    _, _, _, _, provenance = model
+    assert cd.label_for("revenue_sim", "Revenue", provenance) == "Revenue (simulated)"
+    assert cd.label_for("gross_margin_sim", "Margin", provenance) == "Margin (simulated)"
+    assert cd.label_for("observed_units", "Units", provenance) == "Units"
+    assert cd.label_for("estimated_observational_uplift_pct", "Uplift", provenance) == (
+        "Uplift (observational estimate)")
+
+
+def test_an_undeclared_measure_cannot_be_displayed(model):
+    """The point of the provenance table: a figure with no declared basis raises instead of
+    quietly appearing on a dashboard."""
+    _, _, _, _, provenance = model
+    with pytest.raises(cd.ProvenanceError):
+        cd.label_for("mystery_measure_sim", "Mystery", provenance)
+
+
+def test_monetary_measures_are_never_unlabelled(model):
+    """Anything monetary or modelled must carry a suffix; only REAL measures may be bare."""
+    fact, proc, _, _, provenance = model
+    for row in provenance.itertuples():
+        bare = cd.label_for(row.measure, "X", provenance) == "X"
+        if bare:
+            assert row.provenance_tier == "REAL", row.measure
+            assert not row.measure.endswith("_sim"), row.measure
+
+
+def test_the_cockpit_totals_equal_the_committed_kpis(model):
+    """The monthly model is an aggregation, not a recalculation - it must land on the same
+    numbers phases 8 and 9 already committed."""
+    fact, proc, _, _, _ = model
+    pricing = schema.read_table("kpi_pricing_sim.csv", PROCESSED)
+    for cockpit_col, kpi_col in [("revenue_sim", "revenue_sim"),
+                                 ("cogs_sim", "cogs_sim"),
+                                 ("gross_margin_sim", "gross_margin_sim"),
+                                 ("fulfilled_units_sim", "fulfilled_units_sim")]:
+        a, b = fact[cockpit_col].sum(), pricing[kpi_col].sum()
+        assert abs(a - b) / max(abs(b), 1.0) < 1e-6, f"{cockpit_col}: {a} vs {b}"
+
+    po = schema.read_table("fact_purchase_order_sim.parquet", PROCESSED,
+                           columns=["po_value", "receipt_date"])
+    in_window = po["receipt_date"] <= pd.Timestamp("2017-08-31")
+    assert proc["po_value_sim"].sum() <= po["po_value"].sum() + 1.0
+    assert proc["po_value_sim"].sum() >= po.loc[in_window, "po_value"].sum() * 0.99
+
+
+def test_executive_kpis_are_ratios_of_sums(model):
+    fact, proc, _, _, _ = model
+    k = cd.executive_kpis(fact, proc)
+    assert abs(k["gross_margin_pct"]
+               - 100 * fact["gross_margin_sim"].sum() / fact["revenue_sim"].sum()) < 1e-9
+    per_month = 100 * (fact.groupby("month")["gross_margin_sim"].sum()
+                       / fact.groupby("month")["revenue_sim"].sum())
+    assert abs(per_month.mean() - k["gross_margin_pct"]) > 1e-6 or len(per_month) == 1

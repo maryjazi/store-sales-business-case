@@ -9,6 +9,11 @@ import pytest
 ETL_DIR = os.path.join(os.path.dirname(__file__), "..", "etl")
 sys.path.insert(0, ETL_DIR)
 
+# Allow `import cockpit_data` - the cockpit's data layer is deliberately Streamlit-free so
+# it can be tested here without a browser
+DASHBOARD_DIR = os.path.join(os.path.dirname(__file__), "..", "dashboard")
+sys.path.insert(0, DASHBOARD_DIR)
+
 
 @pytest.fixture
 def sample_sales_df():

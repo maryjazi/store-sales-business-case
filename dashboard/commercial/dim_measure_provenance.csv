@@ -1,0 +1,22 @@
+measure,provenance_tier,source_phase,note
+observed_units,REAL,0,"units sold - a quantity, not currency (docs/19 §1)"
+promo_days,REAL,0,days with onpromotion > 0 - promotion occurrence
+fulfilled_units_sim,SIMULATED,8,units the simulated supply chain could deliver
+unfulfilled_units_sim,SIMULATED,8,shortage vs observed quantity - NOT lost sales
+revenue_sim,SIMULATED,9,fulfilled units x simulated net price
+list_revenue_sim,SIMULATED,9,fulfilled units x simulated list price
+markdown_value_sim,DERIVED,9,list revenue - net revenue
+cogs_sim,SIMULATED,9,fulfilled units x simulated unit cost
+gross_margin_sim,DERIVED,9,revenue - COGS
+avg_inventory_units_sim,SIMULATED,8,closing stock derived from the receipt flow
+avg_inventory_value_sim,SIMULATED,8,closing stock x simulated unit cost
+stockout_days_sim,SIMULATED,8,days with a shortage - a SIMULATED OOS rate
+ordered_qty_sim,SIMULATED,7,purchase order quantity
+received_qty_sim,SIMULATED,7,goods received
+po_value_sim,SIMULATED,7,procurement spend
+ppv_total_sim,SIMULATED,7,purchase price variance vs standard cost
+on_time_lines_sim,SIMULATED,7,PO lines received by the requested date
+in_full_lines_sim,SIMULATED,7,PO lines received in full
+avg_lead_time_days_sim,SIMULATED,7,actual lead time
+estimated_observational_uplift_pct,OBSERVATIONAL_ESTIMATE,11,promotion uplift vs a calendar-matched baseline - not causal (docs/24)
+break_even_uplift_pct_sim,DERIVED,10,"margin arithmetic, no behavioural assumption"
