@@ -37,6 +37,7 @@ Project documentation for Store Sales Analytics & Forecasting.
 | 22 | [Pricing & Profitability](22_Pricing_Profitability.md) | Revenue basis reconciliation, margin, markdown, margin bridge |
 | 23 | [Price Sensitivity & Break-even](23_Price_Sensitivity_Design.md) | Break-even arithmetic, scenario assumptions, and why no elasticity is estimated |
 | 24 | [Promotion Effectiveness](24_Promotion_Effectiveness_Design.md) | Observational uplift, placebo test, promo economics, identification limits |
+| 25 | [Commercial Scenario Design](25_Scenario_Design.md) | Policy levers, the baseline anchor, and one common KPI set |
 
 ## Technical reference (legacy / quick links)
 
@@ -55,5 +56,6 @@ Project documentation for Store Sales Analytics & Forecasting.
 | Pricing & Profitability (simulated) | [reports/pricing_profitability_sim.md](../reports/pricing_profitability_sim.md) |
 | Price Sensitivity (simulated) | [reports/price_sensitivity_sim.md](../reports/price_sensitivity_sim.md) |
 | Promotion Effectiveness | [reports/promotion_effectiveness.md](../reports/promotion_effectiveness.md) |
+| Commercial Scenarios (simulated) | [reports/commercial_scenarios_sim.md](../reports/commercial_scenarios_sim.md) |
 | SQL Scripts | [sql/](../sql/) |
 | Portfolio Summary | [PORTFOLIO_SUMMARY.md](../PORTFOLIO_SUMMARY.md) |

@@ -198,3 +198,20 @@ def assert_promotion_economics(e, atol=1.0):
 
     if any("causal" in c.lower() for c in e.columns):
         raise AuditError("a promotion column claims causality; this design cannot support it")
+
+
+def assert_scenario_baseline_matches(baseline_rows, pricing_kpi, rtol=1e-6):
+    """A decision layer must sit on the universe the pipeline already built. The baseline
+    scenario therefore has to reproduce the committed phase-9 KPIs exactly - if it drifts,
+    the layer has quietly started modelling a different business, and every comparison
+    against it becomes meaningless."""
+    if set(baseline_rows["family"]) != set(pricing_kpi["family"]):
+        raise AuditError("the baseline scenario covers a different set of families")
+    merged = baseline_rows.merge(pricing_kpi, on="family", suffixes=("_scenario", "_kpi"))
+    for col in ("revenue_sim", "gross_margin_sim", "fulfilled_units_sim"):
+        a_col, b_col = col + "_scenario", col + "_kpi"
+        if a_col not in merged.columns or b_col not in merged.columns:
+            raise AuditError("baseline audit needs %s in both frames" % col)
+        denom = merged[b_col].abs().clip(lower=1.0)
+        _fail("baseline %s equals the committed KPI" % col,
+              (merged[a_col] - merged[b_col]) / denom, rtol)

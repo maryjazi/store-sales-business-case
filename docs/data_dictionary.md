@@ -95,6 +95,15 @@
 | `diagnostic_promotion_falsification` | **Not a KPI.** Placebo and displacement diagnostics | CSV |
 | `kpi_promotion_economics_sim` | Scenario economics: depends on simulated discount depth | CSV |
 
+## Scenario layer (`data/processed/`, phase 12 — decision layer)
+
+| Table | Role | Format |
+|---|---|---|
+| `kpi_commercial_scenarios_sim` | Scenario × family on the common KPI set | CSV |
+| `kpi_scenario_summary_sim` | Scenario totals and change against the baseline | CSV |
+
+Levers, mappings and limits: [25_Scenario_Design.md](25_Scenario_Design.md).
+
 Design and limits: [24_Promotion_Effectiveness_Design.md](24_Promotion_Effectiveness_Design.md).
 
 Design and limits: [23_Price_Sensitivity_Design.md](23_Price_Sensitivity_Design.md).

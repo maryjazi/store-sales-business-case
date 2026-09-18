@@ -35,9 +35,9 @@ store-sales-time-series-forecasting/
 ├── .gitlab-ci.yml              # CI: pytest on push / merge request
 ├── PORTFOLIO_SUMMARY.md        # resume bullets + LinkedIn blurb
 │
-├── docs/                       # project documentation (24-document BA/DS pack)
-│   ├── README.md               # docs index → 01–24
-│   ├── 01_Project_Charter.md … 24_Promotion_Effectiveness_Design.md
+├── docs/                       # project documentation (25-document BA/DS pack)
+│   ├── README.md               # docs index → 01–25
+│   ├── 01_Project_Charter.md … 25_Scenario_Design.md
 │   ├── architecture.md         # pipeline overview & data flow
 │   ├── data_dictionary.md      # short technical reference
 │   └── pipeline.md             # phase runbook
@@ -62,7 +62,8 @@ store-sales-time-series-forecasting/
 │   ├── phase8_inventory.py          # inventory derived from the receipt flow
 │   ├── phase9_pricing.py            # pricing, margin, markdown, margin bridge
 │   ├── phase10_price_sensitivity.py # break-even and price-scenario analysis
-│   └── phase11_promotion.py         # observational uplift, placebo test, promo economics
+│   ├── phase11_promotion.py         # observational uplift, placebo test, promo economics
+│   └── phase12_scenario.py          # commercial scenarios: a decision layer over the rest
 │
 ├── sql/                        # warehouse-ready SQL equivalents of merge & KPI logic
 │   ├── README.md
@@ -130,7 +131,7 @@ competition data does not contain (price, cost, inventory, suppliers) — see
 | B2 | Pricing & profitability (margin, markdown, price variance) | `phase9_pricing.py` | ✅ |
 | B3 | Break-even & price sensitivity | `phase10_price_sensitivity.py` | ✅ |
 | B5 | Promotion effectiveness (baseline, uplift, promo ROI) | `phase11_promotion.py` | ✅ |
-| B7 | Scenario analysis | `phase12_scenario.py` | ☐ |
+| B7 | Scenario analysis | `phase12_scenario.py` | ✅ |
 | B8 | Commercial cockpit (Executive / Pricing / Procurement / Retail) | `phase13_commercial_export.py` | ☐ |
 
 Step letters follow the locked Track-2 scope; the scripts are numbered in execution order,
@@ -250,6 +251,16 @@ because procurement has to exist before inventory can be derived from it.
 - Every chain-level figure is a **ratio of sums**, never a mean of per-family ratios — the two differ by more than a percentage point here, and a mean would make the real and placebo numbers incomparable. The totals behind each quoted figure are stored in the output files and a test recomputes them against the report.
 - Design, estimator and limits: [docs/24_Promotion_Effectiveness_Design.md](docs/24_Promotion_Effectiveness_Design.md). Report: [reports/promotion_effectiveness.md](reports/promotion_effectiveness.md).
 
+## Data Notes (from Phase 12 — Commercial Scenarios)
+
+- A **decision layer, not a new simulation**: pricing, break-even, inventory, procurement and promotion are connected to three policy levers and scored on one common KPI set — revenue, gross margin, markdown, procurement spend, fulfilment, inventory, OOS.
+- The anchor is an audit: **scenario S0 must reproduce the committed phase-9 KPIs exactly**, checked against the persisted files on every run. A decision layer that drifts from its own baseline is describing a different business, so the phase fails rather than reports.
+- **S1 Margin Protection** (halve the discount on below-median-margin families): revenue −1.9%, **gross margin +11.2%**, markdown −49.7%, procurement spend −5.7%. A revenue report alone would call this a loss — which is why the common KPI set exists.
+- **S2 Availability First** (re-source the OOS-prone quartile to the more reliable supplier): almost nothing moves. Baseline fulfilment is already 98.5%, so there is little left to buy with a costlier supplier. That is a result — availability is not the binding constraint here.
+- **S3 Growth** (deepen the discount only where estimated uplift cleared break-even): revenue +0.6%, gross margin −3.5%. The B5 gate and the −1.5 elasticity assumption **disagree**, and the report says so: the gate is observational and selects families, the elasticity is an assumption about how they respond. Which one you believe is the actual decision.
+- The observational uplift is used **only as a qualification filter**, never as a response function. Volume responds to price through the stated elasticity assumption of docs/23, not through anything estimated here.
+- Levers, mappings and limits: [docs/25_Scenario_Design.md](docs/25_Scenario_Design.md). Report: [reports/commercial_scenarios_sim.md](reports/commercial_scenarios_sim.md).
+
 ## Key Results
 
 - **Total unit sales analyzed**: 1.07B units across 54 stores, 33 categories, 2013–2017.
@@ -295,6 +306,7 @@ python etl/phase8_inventory.py               # inventory derived from receipts -
 python etl/phase9_pricing.py                 # pricing / margin / markdown / margin bridge
 python etl/phase10_price_sensitivity.py      # break-even + price scenarios
 python etl/phase11_promotion.py              # promotion uplift, placebo, economics
+python etl/phase12_scenario.py               # commercial scenarios on one KPI set
 
 pytest tests/ -v                             # run unit & data-quality tests
 ```

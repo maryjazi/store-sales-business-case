@@ -18,6 +18,7 @@ python etl/phase8_inventory.py
 python etl/phase9_pricing.py
 python etl/phase10_price_sensitivity.py
 python etl/phase11_promotion.py
+python etl/phase12_scenario.py
 ```
 
 ## Phase map
@@ -37,6 +38,7 @@ python etl/phase11_promotion.py
 | 9 | `phase9_pricing.py` | `kpi_pricing_sim.csv`, `kpi_pricing_store_sim.csv`, `kpi_margin_bridge_sim.csv`, `reports/pricing_profitability_sim.md` |
 | 10 | `phase10_price_sensitivity.py` | `kpi_break_even_elasticity_sim.csv`, `kpi_price_scenario_sim.csv`, `diagnostic_price_volume_regression_sim.csv`, `reports/price_sensitivity_sim.md` |
 | 11 | `phase11_promotion.py` | `kpi_promotion_uplift_observational.csv`, `kpi_promotion_breadth_response_observational.csv`, `diagnostic_promotion_falsification.csv`, `kpi_promotion_economics_sim.csv`, `reports/promotion_effectiveness.md` |
+| 12 | `phase12_scenario.py` | `kpi_commercial_scenarios_sim.csv`, `kpi_scenario_summary_sim.csv`, `reports/commercial_scenarios_sim.md` |
 
 ## Validation checkpoints
 
@@ -51,6 +53,7 @@ After each phase, confirm the expected artifact exists and row counts match READ
 - Phase 9: revenue views reconcile and the margin bridge closes (the script aborts otherwise); chain gross margin ≈ **22.6%** (test-enforced band: 20–28%)
 - Phase 10: break-even round-trip restores the baseline margin exactly (the script aborts otherwise); 330 break-even rows and 990 scenario rows, none dropped
 - Phase 11: promotion economics identities reconcile (the script aborts otherwise); estimated observational uplift ≈ **+52.3%**, placebo ≈ **+10.6%** — the placebo figure is a diagnostic, never a correction
+- Phase 12: the baseline scenario reproduces the committed phase-9 KPIs exactly (the script aborts otherwise)
 
 ## SQL alternative
 
