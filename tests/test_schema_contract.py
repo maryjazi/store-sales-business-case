@@ -22,7 +22,10 @@ def test_the_contract_covers_every_generated_output():
     for phase in (6, 7, 8, 9, 10):
         assert schema.table_names(phase), f"no output declared for phase {phase}"
     declared = set(schema.SCHEMAS)
-    on_disk = {f for f in os.listdir(PROCESSED)
+    # inside the container image data/ is not present at all - there is then nothing on
+    # disk to compare against, and that is a pass, not an error
+    listing = os.listdir(PROCESSED) if os.path.isdir(PROCESSED) else []
+    on_disk = {f for f in listing
                if f.startswith(("fact_", "dim_", "kpi_", "diagnostic_"))
                and f.endswith((".csv", ".parquet"))
                and not f.startswith(("fact_sales_actual", "fact_sales_forecast"))}

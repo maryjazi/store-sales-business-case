@@ -10,8 +10,12 @@ import os
 import pandas as pd
 import pytest
 
-import cockpit_data as cd
 import schema
+
+try:
+    import cockpit_data as cd
+except ModuleNotFoundError:  # pragma: no cover - the container image ships the pipeline,
+    cd = None                # not the dashboard, so the cockpit layer is simply absent there
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 PROCESSED = os.path.join(ROOT, "data", "processed")
@@ -19,8 +23,9 @@ MODEL = os.path.join(ROOT, "dashboard", "commercial")
 FACT = os.path.join(MODEL, "fact_commercial_monthly.parquet")
 
 pytestmark = pytest.mark.skipif(
-    not os.path.exists(FACT),
-    reason="Cockpit model not generated - run etl/phase13_commercial_export.py first")
+    cd is None or not os.path.exists(FACT),
+    reason="Cockpit data layer or model not available - run etl/phase13_commercial_export.py "
+           "first")
 
 MODEL_TABLES = schema.table_names(13)
 GRAIN_COLUMNS = {"month", "store_nbr", "family", "supplier_id", "days", "po_lines"}
